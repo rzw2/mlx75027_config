@@ -530,17 +530,22 @@ class MLX75027TimeViewer(tk.Toplevel):
 
     def get_updates(self):
         pll_setup = mlx.calc_pll_setup(self.reg_dict)
+        """
         pix_rst = mlx.calc_pretime(self.reg_dict)
         randnm7 = mlx.calc_randnm7(self.reg_dict)
         randnm0 = mlx.calc_randnm0(self.reg_dict)
+        """
         # Update these values from the hmax selected.
         self.reg_dict["PLLSSETUP"][2] = np.uint8(pll_setup)
+        """
         mlx.value16_to_reg(self.reg_dict, pix_rst,
                            "Px_PRETIME_HI", "Px_PRETIME_LOW")
+        
         mlx.value24_to_reg(self.reg_dict, randnm0, "RANDNM0_0",
                            "RANDNM0_1", "RANDNM0_2")
         mlx.value24_to_reg(self.reg_dict, randnm7, "RANDNM7_0",
                            "RANDNM7_1", "RANDNM7_2")
+        """
         return
 
     def update_entry(self, entry, value, disable=False):

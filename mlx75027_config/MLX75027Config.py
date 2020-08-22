@@ -510,15 +510,21 @@ def calc_pretime(reg_dict):
         reg_dict["Px_PREHEAT"][2] | reg_dict["Px_PREMIX"][2])
 
     if pretime_enabled:
-        Px_pretime = reg_dict["Px_PRETIME_HI"][2] * \
-            256 + reg_dict["Px_PRETIME_LOW"][2]
+        Px_pretime = int(reg_dict["Px_PRETIME_HI"][2]) * \
+            256 + int(reg_dict["Px_PRETIME_LOW"][2])
 
         if reg_dict["OUTPUT_MODE"][2] == 4:
-            pre_heat_time = (Px_pretime-5)*hmax/120.0
+            pre_heat_time = (Px_pretime - 5)*hmax/120.0
         else:
-            pre_heat_time = (Px_pretime-8)*hmax/120.0
+            pre_heat_time = (Px_pretime - 9)*hmax/120.0
+
+        if pre_heat_time < 0:
+            pre_heat_time = 0
     else:
-        pre_heat_time = np.floor((50.0*120.0) / hmax)
+        # This is the register value calculation
+        # pre_heat_time = np.floor((50.0*120.0) / hmax)
+        # This is the inverse of the register
+        pre_heat_time = 50.0*hmax/120.0
     return pre_heat_time
 
 
@@ -538,16 +544,31 @@ def set_pretime(reg_dict, pretime):
     hmax = calc_hmax(reg_dict, speed=speed)
 
     if pretime_enabled:
+        # TODO: Add warning for this Note : (𝐹𝐿𝑂𝑂𝑅(Px_PRETIME(in µs)∗120 ) HMAX ) + Px_INTEGRATION should not exceed 1ms.
         if reg_dict["OUTPUT_MODE"][2] == 4:
-            pretime_reg = int((pretime*120)/hmax + 5)
+            pretime_reg = int(np.floor((pretime*120.0)/hmax) + 5)
         else:
-            pretime_reg = int((pretime*120)/hmax + 8)
+            pretime_reg = int(np.floor((pretime*120.0)/hmax) + 9)
+
+        if pretime >= 11.13:
+            randnm7 = (1070 + hmax) * np.floor(((pretime-11.13)/hmax) * 120.0)
+        else:
+            randnm7 = 1070
+
     else:
         # We use calculation in section 7.4.2
         pretime_reg = int(np.floor(50.0*120.0 / hmax))
+        randnm7 = 1070
+
+    randnm0 = hmax*pretime_reg - randnm7 - 2098
 
     value16_to_reg(reg_dict, pretime_reg,
                    "Px_PRETIME_HI", "Px_PRETIME_LOW")
+    # Now set the other pretime registers
+    value24_to_reg(reg_dict, randnm0, "RANDNM0_0",
+                   "RANDNM0_1", "RANDNM0_2")
+    value24_to_reg(reg_dict, randnm7, "RANDNM7_0",
+                   "RANDNM7_1", "RANDNM7_2")
     return
 
 
@@ -990,11 +1011,12 @@ def calc_randnm7(reg_dict):
 
     pretime_enabled = np.any(
         reg_dict["Px_PREHEAT"][2] | reg_dict["Px_PREMIX"][2])
+
     if pretime_enabled:
         px_pretime = calc_pretime(reg_dict)
         # As noted in 7.12. can be calculated as: 1070 + HMAX * FLOOR( ((Px_PRETIME(in µs)−11.13) / HMAX )* 120),𝑤𝑖𝑡ℎ Px_PRETIME ≥ 11.13
         if px_pretime >= 11.13:
-            randnm7 = 1070 + hmax * np.floor(((px_pretime-11.13)/hmzx) * 120)
+            randnm7 = 1070 + hmax * np.floor(((px_pretime-11.13)/hmax) * 120)
         else:
             randnm7 = 1070
     else:

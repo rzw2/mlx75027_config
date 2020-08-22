@@ -113,6 +113,20 @@ class MLX75027ConfigTest(unittest.TestCase):
         XXX : TODO 
         """
 
+        import_file = os.path.join("..", "mlx75027.csv")
+        self.assertTrue(os.path.isfile(import_file))
+        reg_dict = mlx.csv_import(import_file)
+
+        pretime = mlx.calc_pretime(reg_dict)
+
+        # Set some preheat on
+        preheat = np.zeros(8, dtype=np.bool)
+        preheat[0] = True
+        mlx.set_preheat(reg_dict, preheat)
+
+        mlx.set_pretime(reg_dict, pretime)
+        pretime1 = mlx.calc_pretime(reg_dict)
+        self.assertEqual(pretime, pretime1)
         return
 
     def test_roi(self):
