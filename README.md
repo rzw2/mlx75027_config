@@ -27,6 +27,29 @@ The test cases can be run in the test folder
 
 The version of the datasheet v0.8 that this tool was written for is provided in the doc folder for reference, as the datasheet might be updated by Melexis. 
 
+The MLX75027_RegisterMap.py opens a window as shown below 
+![Scheme](doc/mainWindow.PNG)
+The fields are
+* Register : This is the register name, and as often as possible is the same register name in the MLX75027 datasheet
+* Bits : The bits of the register that are used
+* Description : What the register actually does 
+* Values : The value of the register as an integer 
+
+The buttons do the following
+* Export CSV : Exports the current registers, bits, descriptions and values to a CSV file
+* Export Registers : Exports the registers addresses and their values 
+* Import CSV : Load a CSV which has previously been exported. 
+* ROI : Opens another window to configure the region of interest (ROI) 
+* Time : Opens another window to configure the depth frame timing 
+* Quit : Exits 
+
+The ROI GUI Window looks like the following 
+![Scheme](doc/roiWindow.PNG)
+
+The Time GUi Window looks like the following 
+![Scheme](doc/timeWindow.PNG)
+Here the number of raw frames (phases) can be configured, the modulation frequency, MIPI speed, data type, etc. The integration time of each raw frame can be configured along with any dead frame time. 
+
 ## Contact 
 
 For comment, assistance or bug reporting (or the correct interpretation of the datasheet) please contact Refael Whyte, r.whyte@chronoptics.com 
