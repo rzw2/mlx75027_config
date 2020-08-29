@@ -35,6 +35,6 @@ For comment, assistance or bug reporting (or the correct interpretation of the d
 
 ## Features yet to support
 List of features not yet supported
-    * If selecting Flip or Mirror the ROI needs to be reversed 
-    * Set the PN9 test pattern
-    * Output the boot sequence registers 
+* If selecting Flip or Mirror the ROI needs to be reversed 
+* Set the PN9 test pattern
+* Output the boot sequence registers 
