@@ -72,54 +72,54 @@ Software ",1
 ,0x21B6,[6:4],P5_PHASE_SHIFT,Phase shift of raw frame 5,"0 : 0 degrees, 1: 45 degrees, 2: 90 degrees, 3: 135 degrees, 4: 180 degrees, 5: 225 degrees, 6: 270 degrees, 7: 315 degrees",0
 ,0x21B7,[2:0],P6_PHASE_SHIFT,Phase shift of raw frame 6,"0 : 0 degrees, 1: 45 degrees, 2: 90 degrees, 3: 135 degrees, 4: 180 degrees, 5: 225 degrees, 6: 270 degrees, 7: 315 degrees",0
 ,0x21B7,[6:4],P7_PHASE_SHIFT,Phase shift of raw frame 7,"0 : 0 degrees, 1: 45 degrees, 2: 90 degrees, 3: 135 degrees, 4: 180 degrees, 5: 225 degrees, 6: 270 degrees, 7: 315 degrees",0
-,0x4EA0,[0],MODREF,,"0: Illum phase shifted, 1: Sensor phase shifted",0
-7.16,0x21C8,[7:0],P0_PHASE_IDLE,An artificial idle time (wait time or V-blanking) between 2 subsequent phases can be configured. ,Phase_idle_us*120/HMAX,5
-,0x21C9,[7:0],P1_PHASE_IDLE,,,5
-,0x21CA,[7:0],P2_PHASE_IDLE,,,5
-,0x21CB,[7:0],P3_PHASE_IDLE,,,5
-,0x21CC,[7:0],P4_PHASE_IDLE,,,5
-,0x21CD,[7:0],P5_PHASE_IDLE,,,5
-,0x21CE,[7:0],P6_PHASE_IDLE,,,5
-,0x21CF,[7:0],P7_PHASE_IDLE,,,5
-7.17,0x21C4,[7:0],Px_LEDEN,Enable or disable the LEDEN pulse(s).,,0
-7.18,0x21A8,[1:0],P1_DMIX0,,"0: Modulating, 1: static low, 2: static high",0
-,0x21A8,[3:2],P2_DMIX0,,,0
-,0x21A8,[5:4],P3_DMIX0,,,0
-,0x21A8,[7:6],P4_DMIX0,,,0
-,0x21A9,[1:0],P5_DMIX0,,"0: Modulating, 1: static low, 2: static high",0
-,0x21A9,[3:2],P6_DMIX0,,,0
-,0x21A9,[5:4],P7_DMIX0,,,0
-,0x21A9,[7:6],P8_DMIX0,,,0
-,0x21AC,[1:0],P1_DMIX1,,"0: Modulating, 1: static low, 2: static high",0
-,0x21AC,[3:2],P2_DMIX1,,,0
-,0x21AC,[5:4],P3_DMIX1,,,0
-,0x21AC,[7:6],P4_DMIX1,,,0
-,0x21AD,[1:0],P5_DMIX1,,"0: Modulating, 1: static low, 2: static high",0
-,0x21AD,[3:2],P6_DMIX1,,,0
-,0x21AD,[5:4],P7_DMIX1,,,0
-,0x21AD,[7:6],P8_DMIX1,,,0
-,0x21B0,[1:0],P1_STATIC_LED,,,0
-,0x21B0,[3:2],P2_STATIC_LED,,,0
-,0x21B0,[5:4],P3_STATIC_LED,,,0
-,0x21B0,[7:6],P4_STATIC_LED,,,0
-,0x21B1,[1:0],P5_STATIC_LED,,,0
-,0x21B1,[3:2],P6_STATIC_LED,,,0
-,0x21B1,[5:4],P7_STATIC_LED,,,0
-,0x21B1,[7:6],P8_STATIC_LED,,,0
+,0x4EA0,[0],MODREF,"Selects if the sensor modulation signal is phase shifted, or if the illumination signal is shifted. ","0: Illum phase shifted, 1: Sensor phase shifted",0
+7.16,0x21C8,[7:0],P0_PHASE_IDLE,An artificial idle time (wait time or V-blanking) between 2 subsequent phases can be configured. This is raw frame 0 idle time,Phase_idle_us*120/HMAX,5
+,0x21C9,[7:0],P1_PHASE_IDLE,Raw frame 1 idle time,Phase_idle_us*120/HMAX,5
+,0x21CA,[7:0],P2_PHASE_IDLE,Raw frame 2 idle time,Phase_idle_us*120/HMAX,5
+,0x21CB,[7:0],P3_PHASE_IDLE,Raw frame 3 idle time,Phase_idle_us*120/HMAX,5
+,0x21CC,[7:0],P4_PHASE_IDLE,Raw frame 4 idle time,Phase_idle_us*120/HMAX,5
+,0x21CD,[7:0],P5_PHASE_IDLE,Raw frame 5 idle time,Phase_idle_us*120/HMAX,5
+,0x21CE,[7:0],P6_PHASE_IDLE,Raw frame 6 idle time,Phase_idle_us*120/HMAX,5
+,0x21CF,[7:0],P7_PHASE_IDLE,Raw frame 7 idle time,Phase_idle_us*120/HMAX,5
+7.17,0x21C4,[7:0],Px_LEDEN,Enable or disable the LEDEN pulse(s) for each raw frame. ,See setion 7.16,0
+7.18,0x21A8,[1:0],P1_DMIX0,Modulation mode of tap A of raw frame 0,"0: Modulating, 1: static low, 2: static high",0
+,0x21A8,[3:2],P2_DMIX0,Modulation mode of tap A of raw frame 1,"0: Modulating, 1: static low, 2: static high",0
+,0x21A8,[5:4],P3_DMIX0,Modulation mode of tap A of raw frame 2,"0: Modulating, 1: static low, 2: static high",0
+,0x21A8,[7:6],P4_DMIX0,Modulation mode of tap A of raw frame 3,"0: Modulating, 1: static low, 2: static high",0
+,0x21A9,[1:0],P5_DMIX0,Modulation mode of tap A of raw frame 4,"0: Modulating, 1: static low, 2: static high",0
+,0x21A9,[3:2],P6_DMIX0,Modulation mode of tap A of raw frame 5,"0: Modulating, 1: static low, 2: static high",0
+,0x21A9,[5:4],P7_DMIX0,Modulation mode of tap A of raw frame 6,"0: Modulating, 1: static low, 2: static high",0
+,0x21A9,[7:6],P8_DMIX0,Modulation mode of tap A of raw frame 7,"0: Modulating, 1: static low, 2: static high",0
+,0x21AC,[1:0],P1_DMIX1,Modulation mode of tap B of raw frame 0,"0: Modulating, 1: static low, 2: static high",0
+,0x21AC,[3:2],P2_DMIX1,Modulation mode of tap B of raw frame 1,"0: Modulating, 1: static low, 2: static high",0
+,0x21AC,[5:4],P3_DMIX1,Modulation mode of tap B of raw frame 2,"0: Modulating, 1: static low, 2: static high",0
+,0x21AC,[7:6],P4_DMIX1,Modulation mode of tap B of raw frame 3,"0: Modulating, 1: static low, 2: static high",0
+,0x21AD,[1:0],P5_DMIX1,Modulation mode of tap B of raw frame 4,"0: Modulating, 1: static low, 2: static high",0
+,0x21AD,[3:2],P6_DMIX1,Modulation mode of tap B of raw frame 5,"0: Modulating, 1: static low, 2: static high",0
+,0x21AD,[5:4],P7_DMIX1,Modulation mode of tap B of raw frame 6,"0: Modulating, 1: static low, 2: static high",0
+,0x21AD,[7:6],P8_DMIX1,Modulation mode of tap B of raw frame 7,"0: Modulating, 1: static low, 2: static high",0
+,0x21B0,[1:0],P1_STATIC_LED,Modulation mode of the illumination output of raw frame 0,"0: Modulating, 1: static low, 2: static high",0
+,0x21B0,[3:2],P2_STATIC_LED,Modulation mode of the illumination output of raw frame 1,"0: Modulating, 1: static low, 2: static high",0
+,0x21B0,[5:4],P3_STATIC_LED,Modulation mode of the illumination output of raw frame 2,"0: Modulating, 1: static low, 2: static high",0
+,0x21B0,[7:6],P4_STATIC_LED,Modulation mode of the illumination output of raw frame 3,"0: Modulating, 1: static low, 2: static high",0
+,0x21B1,[1:0],P5_STATIC_LED,Modulation mode of the illumination output of raw frame 4,"0: Modulating, 1: static low, 2: static high",0
+,0x21B1,[3:2],P6_STATIC_LED,Modulation mode of the illumination output of raw frame 5,"0: Modulating, 1: static low, 2: static high",0
+,0x21B1,[5:4],P7_STATIC_LED,Modulation mode of the illumination output of raw frame 6,"0: Modulating, 1: static low, 2: static high",0
+,0x21B1,[7:6],P8_STATIC_LED,Modulation mode of the illumination output of raw frame 7,"0: Modulating, 1: static low, 2: static high",0
 7.19,0x14A5,[1:0],BINNING_MODE,,"0: vga, 1: qvga, 2: qqvga, 3: qqqvga",0
-7.2,0x0804,[5:0],ROI_COL_START_HI,,,0
+7.2,0x0804,[5:0],ROI_COL_START_HI,,x1,0
 ,0x0805,[7:0],ROI_COL_START_LOW,,,1
-,0x0806,[1:0],ROI_COL_WIDTH_HI,,,2
+,0x0806,[1:0],ROI_COL_WIDTH_HI,,x2 - x1 + 1,2
 ,0x0807,[7:0],ROI_COL_WIDTH_LOW,,,128
-,0x0808,[0],ROI_ROW_START_HI,,,0
+,0x0808,[0],ROI_ROW_START_HI,,(y1-1)/2,0
 ,0x0809,[7:0],ROI_ROW_START_LOW,,,0
-,0x080A,[0],ROI_ROW_END_HI,,,0
+,0x080A,[0],ROI_ROW_END_HI,,y2/2 + 1,0
 ,0x080B,[7:0],ROI_ROW_END_LOW,,,241
-7.21,0x080C,[0],IMG_ORIENTATION_V,,,0
-,0x080D,[0],IMG_ORIENTATION_H,,,0
-7.22,0x1403,[7:0],TEMP_VALUE,,,0
-7.23,0x1433,[0],STATS_EN,,,0
-,0x14BB,[0],STATS_MODE,,,0
+7.21,0x080C,[0],IMG_ORIENTATION_V,Flip the output image.  Changing registers IMG_ORIENTATION_H or IMG_ORIENTATION_V (from section 7.20) also requires the user to reverse the applicable ROI registers for the same region to be readout,"0: Default, 1: Flip",0
+,0x080D,[0],IMG_ORIENTATION_H,Mirror the output image.  Changing registers IMG_ORIENTATION_H or IMG_ORIENTATION_V (from section 7.20) also requires the user to reverse the applicable ROI registers for the same region to be readout,"0: Default, 1: Mirror",0
+7.22,0x1403,[7:0],TEMP_VALUE,The internal junction temperature,Temperature [in °C] = TEMP_VALUE - 40,0
+7.23,0x1433,[0],STATS_EN,,"0: Statistics disabled, no eror flags in pixel data, 1: Statistics enabled, error flag or error code in pixel data",0
+,0x14BB,[0],STATS_MODE,,"0: Bit [11] of pixel data is the error flag, 1: 0x800 is the error code (A-B) mode. ",0
 7.25,0x4E9E,[2:0],DUTY_CYCLE,,"0: No Adjustment, 1: increase, 2: decrease",0
 ,0x21B9,[3:0],DUTY_CYCLE_VALUE,The total delay (of the rising and falling edge) = DUTY_CYCLE_VALUE *  500 ps (typical value),,0
 ,0x10E2,[0],LVDS_EN,The illumination signal is available as differential signal (subLVDS) or as single ended pulses (CMOS). ,"0: CMOS, 1: LVDS",0

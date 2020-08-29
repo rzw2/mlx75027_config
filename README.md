@@ -32,3 +32,9 @@ The version of the datasheet v0.8 that this tool was written for is provided in 
 For comment, assistance or bug reporting (or the correct interpretation of the datasheet) please contact Refael Whyte, r.whyte@chronoptics.com 
 
 [Chronoptics](https://www.chronoptics.com) designs and develops 3D time-of-flight depth sensing cameras, contact us for any of your 3D ToF needs. 
+
+# Features yet to support
+List of features not yet supported
+    - If selecting Flip or Mirror the ROI needs to be reversed 
+    - Set the PN9 test pattern
+    - Output the boot sequence registers 
