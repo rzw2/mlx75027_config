@@ -115,7 +115,7 @@ class RegisterViewer(tk.Toplevel):
 
             desc_txt = tk.Text(self.frame)
             desc_txt.configure(height=2, wrap=tk.WORD)
-            desc_txt.insert(tk.INSERT, reg_dict[k][3])
+            desc_txt.insert(tk.INSERT, reg_dict[k][3]+reg_dict[k][5])
             desc_txt.configure(state="disabled")
             desc_txt.grid(row=row_ind, column=3, sticky=tk.E+tk.W)
 
@@ -158,6 +158,8 @@ class RegisterViewer(tk.Toplevel):
                 new_val = int(float(self.val_entry[ind].get()))
                 if(new_val >= (2**self._reg_dict[k][1])):
                     raise ValueError("Size")
+                if new_val < 0:
+                    raise ValueError("Negative register value")
                 self._reg_dict[k][2] = new_val
             except ValueError:
                 self.val_entry[ind].configure(background="red")
@@ -271,7 +273,12 @@ class BaseROIViewer(tk.Toplevel):
         return
 
     def get_entry(self, entry, min_val, max_val):
-        value = float(entry.get())
+        try:
+            value = float(entry.get())
+        except ValueError as er:
+            entry.configure(background="red")
+            raise er
+
         if value < min_val:
             entry.configure(background="red")
             raise ValueError("Value out of range")
@@ -279,6 +286,7 @@ class BaseROIViewer(tk.Toplevel):
             entry.configure(background="red")
             raise ValueError("Value out of range")
 
+        entry.configure(background="white")
         return value
 
     def set_roi(self):

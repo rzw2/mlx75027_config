@@ -557,7 +557,12 @@ class MLX75027TimeViewer(tk.Toplevel):
         return
 
     def get_entry(self, entry, min_val, max_val):
-        value = float(entry.get())
+        try:
+            value = float(entry.get())
+        except ValueError as er:
+            entry.configure(background="red")
+            raise er
+
         if value < min_val:
             entry.configure(background="red")
             raise ValueError("Value out of range")
@@ -565,6 +570,7 @@ class MLX75027TimeViewer(tk.Toplevel):
             entry.configure(background="red")
             raise ValueError("Value out of range")
 
+        entry.configure(background="white")
         return value
 
     def update_can(self):
@@ -640,10 +646,10 @@ class MLX75027ROIViewer(BaseROIViewer, tk.Toplevel):
         return mlx.calc_roi(self.reg_dict)
 
     def get_roi(self):
-        col_start = self.get_entry(self.col_start_entry, 0, 640)
-        col_end = self.get_entry(self.col_end_entry, 0, 640)
-        row_start = self.get_entry(self.row_start_entry, 0, 482)
-        row_end = self.get_entry(self.row_end_entry, 0, 482)
+        col_start = int(self.get_entry(self.col_start_entry, 1, 640))
+        col_end = int(self.get_entry(self.col_end_entry, 1, 640))
+        row_start = int(self.get_entry(self.row_start_entry, 1, 482))
+        row_end = int(self.get_entry(self.row_end_entry, 1, 482))
 
         if row_start > row_end:
             raise ValueError("Row readout must start before end")

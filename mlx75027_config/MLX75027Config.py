@@ -702,10 +702,7 @@ def calc_deadtime(reg_dict):
         reg_dict, "FRAME_TIME0", "FRAME_TIME1", "FRAME_TIME2", "FRAME_TIME3")
     frame_time_us = (frame_time_reg*hmax) / 120.0
 
-    phase_times = calc_phase_time(reg_dict)
-
-    # XXX : The datasheet doesn't say about the sum of phase times
-    min_frame_time = np.sum(phase_times[0:reg_dict["PHASE_COUNT"][2]])
+    min_frame_time = calc_frame_time(reg_dict, False)
 
     if min_frame_time > frame_time_us:
         dead_time = 0
@@ -717,7 +714,8 @@ def calc_deadtime(reg_dict):
 
 def set_deadtime(reg_dict, dead_time):
     """
-    Set the deadtime in micro-seconds for a depth frame 
+    The MLX75027 does not have a dead time value, but the FRAME_TIME value is set
+    to allow for a dead time.  
 
     Parameters
     ----------
@@ -727,9 +725,7 @@ def set_deadtime(reg_dict, dead_time):
     """
     speed = calc_speed(reg_dict)
     hmax = calc_hmax(reg_dict, speed=speed)
-    phase_times = calc_phase_time(reg_dict)
-
-    min_frame_time = np.sum(phase_times[0:reg_dict["PHASE_COUNT"][2]])
+    min_frame_time = calc_frame_time(reg_dict, False)
 
     frame_time_us = min_frame_time + dead_time
     if dead_time > 0:
@@ -743,14 +739,43 @@ def set_deadtime(reg_dict, dead_time):
     return
 
 
-def calc_frame_time(reg_dict):
+def set_frame_time(reg_dict, frame_time_us):
     """
-    Calculates the total depth frame time in micro-seconds 
+    Sets the FRAME_TIME register. If the input time is less than the minimum allowable
+    the FRAME_TIME register is set to 0.  
 
     Parameters
     ----------
-    reg_dict : dict, the dictionary that contains all the register information 
+    reg_dict : dict 
+        The dictionary that contains all the register information 
+    frame_time_us : float
+        The frame time in microsecond (us)
+    """
+    frame_time_min = calc_frame_time(reg_dict, use_frame_time=False)
+    if frame_time_us <= frame_time_min:
+        # Set the frame_time register to zero
+        value32_to_reg(reg_dict, 0, "FRAME_TIME0", "FRAME_TIME1",
+                       "FRAME_TIME2", "FRAME_TIME3")
+        return
 
+    speed = calc_speed(reg_dict)
+    hmax = calc_hmax(reg_dict, speed=speed)
+    frame_time_reg = int(np.floor(frame_time_us*120.0/hmax))
+    value32_to_reg(reg_dict, frame_time_reg, "FRAME_TIME0", "FRAME_TIME1",
+                   "FRAME_TIME2", "FRAME_TIME3")
+    return
+
+
+def calc_frame_time(reg_dict, use_frame_time=False):
+    """
+    Calculates the total depth frame time in micro-seconds. 
+
+    Parameters
+    ----------
+    reg_dict : dict 
+        The dictionary that contains all the register information 
+    use_frame_time, bool, optional 
+        Use the FRAME_TIME register
     Returns 
     frame_time : float, the total depth frame time in micro-seconds (us) 
     """
@@ -761,13 +786,18 @@ def calc_frame_time(reg_dict):
         256 + reg_dict["FRAME_STARTUP_LOW"][2]
     frame_startup_us = (frame_startup*hmax)/120
 
-    dead_time = calc_deadtime(reg_dict)
     phase_times = calc_phase_time(reg_dict)
     frame_setup = 500.0
 
     phase_time = np.sum(phase_times[0:reg_dict["PHASE_COUNT"][2]])
 
-    frame_time = phase_time + frame_setup + dead_time + frame_startup_us
+    frame_time = phase_time + frame_setup + frame_startup_us
+    if use_frame_time:
+        frame_time_reg = reg_to_value(
+            reg_dict, "FRAME_TIME0", "FRAME_TIME1", "FRAME_TIME2", "FRAME_TIME3")
+        ft_reg = frame_time_reg*hmax/120.0
+        if ft_reg > frame_time:
+            return ft_reg
     return frame_time
 
 
@@ -813,7 +843,7 @@ def calc_fps(reg_dict):
     depth_fps : float, the number of depth frames per second 
     raw_fps : float, the number of raw frames per second 
     """
-    frame_time_us = calc_frame_time(reg_dict)
+    frame_time_us = calc_frame_time(reg_dict, use_frame_time=True)
     depth_fps = 1.0 / (frame_time_us*1e-6)
     raw_fps = depth_fps * reg_dict["PHASE_COUNT"][2]
     return depth_fps, raw_fps
