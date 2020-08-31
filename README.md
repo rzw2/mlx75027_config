@@ -17,7 +17,7 @@ The run the Tkinter GUI
     
     python MLX75027_RegisterMap.py 
 
-The mlx75027.csv file contains the registers, there names and the default values. 
+The mlx75027.csv file contains the registers, and their names, and default values. 
 
 The test cases can be run in the test folder 
 
@@ -30,7 +30,7 @@ The version of the datasheet v0.8 that this tool was written for is provided in 
 The MLX75027_RegisterMap.py opens a window as shown below 
 ![Scheme](doc/mainWindow.PNG)
 The fields are
-* Register : This is the register name, and as often as possible is the same register name in the MLX75027 datasheet
+* Register : This is the register name, and as often as possible it is the same register name in the MLX75027 datasheet
 * Bits : The bits of the register that are used
 * Description : What the register actually does 
 * Values : The value of the register as an integer 
@@ -46,7 +46,7 @@ The buttons do the following
 The ROI GUI Window looks like the following 
 ![Scheme](doc/roiWindow.PNG)
 
-The Time GUi Window looks like the following 
+The Time GUI Window looks like the following 
 ![Scheme](doc/timeWindow.PNG)
 Here the number of raw frames (phases) can be configured, the modulation frequency, MIPI speed, data type, etc. The integration time of each raw frame can be configured along with any dead frame time. 
 
