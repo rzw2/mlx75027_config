@@ -24,3 +24,4 @@ from mlx75027_config.MLX75027Config import calc_nlanes, set_nlanes, set_hmax, ca
 from mlx75027_config.EPC660Config import epc_calc_mod_freq, epc_calc_phase_steps, epc_calc_int_times, epc_set_int_times, epc_calc_roi_coordinates
 from mlx75027_config.EPC660Config import epc_calc_roi, epc_calc_light_phase, epc_setup_light_phase, epc_calc_hdr, epc_calc_dual_phase, epc_set_mode
 from mlx75027_config.EPC660Config import epc_set_roi, epc_calc_bin_mode, epc_set_bin_mode, epc_calc_binning, epc_set_binning, epc_set_mod_freq, epc_calc_img_size
+from mlx75027_config.EPC660Config import epc_set_phase_steps, epc_calc_phase_steps, epc_calc_external_mod, epc_set_external_mod

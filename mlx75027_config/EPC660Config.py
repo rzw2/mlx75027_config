@@ -18,7 +18,7 @@ import warnings
 from mlx75027_config import value16_to_reg
 
 
-def epc_set_extenal_mod(reg_dict, external):
+def epc_set_external_mod(reg_dict, external):
     """
     Set the external modulation of the EPC660 image sensor. 
 
@@ -169,7 +169,7 @@ def epc_calc_dual_phase(reg_dict):
         True if dual phase enabled, false otherwise
     """
     dual_phase = (reg_dict["mod_sel"][2] == 0) and (
-        reg_dict["num_dcs"][2] == 1) and (reg_dict["pixel_mode"][2] == 1)
+        reg_dict["num_dcs"][2] == 1) and (reg_dict["pixel_mode"][2] == 1) and (reg_dict["dual_int_mode"][2] == 1)
     return dual_phase
 
 
@@ -210,8 +210,11 @@ def epc_set_mode(reg_dict, dual_phase, common_mode, hdr):
         reg_dict["mod_sel"][2] = 0
         reg_dict["num_dcs"][2] = 1
         reg_dict["pixel_mode"][2] = 1
+        reg_dict["dual_int_mode"][2] = 1
     else:
-        # If HDR we do things differently
+        reg_dict["dual_int_mode"][2] = 0
+        reg_dict["dual_int_mode"][2] = 0
+
         if common_mode:
             reg_dict["num_dcs"][2] = 0
             reg_dict["mod_sel"][2] = 3
@@ -221,6 +224,7 @@ def epc_set_mode(reg_dict, dual_phase, common_mode, hdr):
 
         if hdr:
             reg_dict["pixel_mode"][2] = 1
+            reg_dict["dual_int_mode"][2] = 1
         else:
             reg_dict["pixel_mode"][2] = 0
     return
@@ -228,45 +232,45 @@ def epc_set_mode(reg_dict, dual_phase, common_mode, hdr):
 
 def epc_set_phase_steps(reg_dict, seq):
     """
-    Set the sequency of RAW frames to use. 
+    Set the sequence of the phase steps to capture
     """
-    # XXX : Stil to implement.
+
+    if np.size(seq) != 4:
+        raise RuntimeError("Require input sequence of size 4!")
+
+    for s in seq:
+        if s < 0 or s > 3:
+            raise RuntimeError(
+                "Each sequence must be between 0 and 3! Only 4 possible phase steps!")
+
+    dual_phase = epc_calc_dual_phase(reg_dict)
+    if dual_phase:
+        for n in range(0, 4):
+            reg_dict["dcs_mgx1_{:d}".format(n)][2] = np.uint8(seq[n])
+    else:
+        for n in range(0, 4):
+            reg_dict["dcs_mgx0_{:d}".format(n)][2] = np.uint8(seq[n])
     return
 
 
 def epc_calc_phase_steps(reg_dict):
     """
-    XXX : TODO Fix up this function or remove it.
+    Returns the order of the phase steps being captured. 
     """
-    seq = []
-    common_mode = False
 
-    if (reg_dict["pixel_mode"][2] == 1):
-        if (reg_dict["dual_int_mode"][2] == 1):
-            print("Dual integration mode enabled!")
+    dual_phase = epc_calc_dual_phase(reg_dict)
 
-        if (reg_dict["num_dcs"][2] == 1):
-            # XXX : Not sure if we can do dual phase with 4 phase steps
-            print("Dual phase mode!")
-
-    # 4 DCS - normal ToF
-    if (reg_dict["mod_sel"][2] == 0) and (reg_dict["pixel_mode"][2] == 0):
-        if (reg_dict["num_dcs"][2] == 3):
-            # Normal 4 phase step ToF
-            seq = np.array([reg_dict["dcs_mgx0_0"][2],
-                            reg_dict["dcs_mgx0_1"][2],
-                            reg_dict["dcs_mgx0_2"][2],
-                            reg_dict["dcs_mgx0_3"][2]])
-
-    # Grayscale/Common mode
-    if (reg_dict["mod_sel"][2] == 3):
-        print("Gray-scale mode")
-        common_mode = True
-
-    # Print the sequence
-    print("Phase Sequence: " + str(seq))
-    print("Common Mode: " + str(common_mode))
-    return seq, common_mode
+    if dual_phase:
+        # Dual Phase DCS
+        seq = np.array([reg_dict["dcs_mgx1_0"][2], reg_dict["dcs_mgx1_1"]
+                        [2], reg_dict["dcs_mgx1_2"][2], reg_dict["dcs_mgx1_3"][2]])
+    else:
+        # 4 DCS - normal ToF
+        seq = np.array([reg_dict["dcs_mgx0_0"][2],
+                        reg_dict["dcs_mgx0_1"][2],
+                        reg_dict["dcs_mgx0_2"][2],
+                        reg_dict["dcs_mgx0_3"][2]])
+    return seq
 
 
 def epc_calc_int_times(reg_dict, mclk, demod_clk):
@@ -335,6 +339,8 @@ def epc_set_int_times(reg_dict, int_time_ms, mclk, demod_clk):
 
     if np.ndim(int_time_ms) == 0:
         int_time_ms = np.array([int_time_ms])
+    if type(int_time_ms) == list:
+        int_time_ms = np.array(int_time_ms)
 
     if np.size(int_time_ms) > 2:
         raise RuntimeError("Can only do 1 or 2 integration times")

@@ -393,7 +393,7 @@ class EPC660PLLViewer(tk.Toplevel):
         if light_ph_enabled:
             self.reg_dict["dll_crt"][2] = 4
             phase_desired = float(self.light_ph.get())
-            epc_setup_light_phase(self.reg_dict, f_led,
+            epc_setup_light_phase(self.reg_dict,
                                   phase_desired, self.mclk, self.demod_clk)
         else:
             self.reg_dict["dll_crt"][2] = 1

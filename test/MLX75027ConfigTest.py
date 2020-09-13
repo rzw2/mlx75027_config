@@ -166,8 +166,78 @@ class EPC660ConfigTest(unittest.TestCase):
         import_file = os.path.join("..", "epc660.csv")
         self.assertTrue(os.path.isfile(import_file))
         reg_dict = mlx.csv_import(import_file)
-
+        mclk = 96.0
+        demod_clk = 0.0
         # Set no HDR
+        hdr = mlx.epc_calc_hdr(reg_dict)
+        self.assertFalse(hdr)
+        # Set the integration times
+        int_times = mlx.epc_calc_int_times(reg_dict, mclk, demod_clk)
+        self.assertEqual(np.size(int_times), 1)
+        test_times = [0.1, 0.25, 0.5, 0.75, 1.1]
+        for tx in test_times:
+            mlx.epc_set_int_times(reg_dict, tx, mclk, demod_clk)
+            int_time = mlx.epc_calc_int_times(reg_dict, mclk, demod_clk)
+            self.assertEqual(tx, np.round(int_time[0], 2))
+
+            mlx.epc_set_int_times(reg_dict, np.array([tx]), mclk, demod_clk)
+            int_time = mlx.epc_calc_int_times(reg_dict, mclk, demod_clk)
+            self.assertEqual(tx, np.round(int_time[0], 2))
+
+        # HDR
+        mlx.epc_set_mode(reg_dict, False, False, True)
+        hdr = mlx.epc_calc_hdr(reg_dict)
+        self.assertTrue(hdr)
+        int_times = mlx.epc_calc_int_times(reg_dict, mclk, demod_clk)
+        self.assertEqual(np.size(int_times), 2)
+
+        test_times = [[0.1, 0.2], [0.1, 0.5], [0.1, 1.0]]
+        for tx in test_times:
+            mlx.epc_set_int_times(reg_dict, tx, mclk, demod_clk)
+            int_time = mlx.epc_calc_int_times(reg_dict, mclk, demod_clk)
+            self.assertEqual(tx[0], np.round(int_time[0], 2))
+            self.assertEqual(tx[1], np.round(int_time[1], 2))
+        return
+
+    def test_sequence(self):
+        import_file = os.path.join("..", "epc660.csv")
+        self.assertTrue(os.path.isfile(import_file))
+        reg_dict = mlx.csv_import(import_file)
+        # Single phase
+        seq_base = np.array([0, 1, 2, 3])
+        mlx.epc_set_phase_steps(reg_dict, seq_base)
+        seq = mlx.epc_calc_phase_steps(reg_dict)
+        np.testing.assert_equal(seq, seq_base)
+
+        seq_base = np.array([0, 2, 1, 3])
+        mlx.epc_set_phase_steps(reg_dict, seq_base)
+        seq = mlx.epc_calc_phase_steps(reg_dict)
+        np.testing.assert_equal(seq, seq_base)
+
+        # TODO Dual phase
+        return
+
+    def test_external_mod(self):
+        import_file = os.path.join("..", "epc660.csv")
+        self.assertTrue(os.path.isfile(import_file))
+        reg_dict = mlx.csv_import(import_file)
+
+        external = mlx.epc_calc_external_mod(reg_dict)
+        self.assertFalse(external)
+
+        mlx.epc_set_external_mod(reg_dict, True)
+        external = mlx.epc_calc_external_mod(reg_dict)
+        self.assertTrue(external)
+        # Verify we can calculate fmod and int_times
+        #
+        demod = 80.0
+        mclk = 96.0
+
+        fmod = mlx.epc_calc_mod_freq(reg_dict, mclk, demod)
+        self.assertEqual(fmod, demod/4.0)
+
+        int_time = mlx.epc_calc_int_times(reg_dict, mclk, demod)
+        # TODO : Verify int_time is calculated correctly
         return
 
 
