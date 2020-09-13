@@ -1,10 +1,10 @@
-# MLX75027 Sensor Configuration
+# Time-of-Flight Sensor Configuration
 
 ## Description
 
-This Python utility is for calculating the register values of the [MLX75027](https://www.melexis.com/en/product/MLX75027/Automotive-VGA-Time-Of-Flight-Sensor) Time-of-Flight image sensor. 
+This Python utility is for calculating the register values of the [MLX75027](https://www.melexis.com/en/product/MLX75027/Automotive-VGA-Time-Of-Flight-Sensor) Time-of-Flight image sensor from Melexis, and for the [EPC660](https://www.espros.com/photonics/time-of-flight-chip-epc660/) Time-of-Flight image sensor from Espros Photonics.
 
-There is a set of functions in the mlx75027_config folder for calculating register values and for importing and export csv files. 
+There is a set of functions in the mlx75027_config folder for calculating register values and for importing and export csv files.  
 
 A Tkinter GUI is provided for visually setting the values and generating configurations, this GUI is in the configTool folder.  
 
@@ -13,11 +13,15 @@ A Tkinter GUI is provided for visually setting the values and generating configu
 Add the this folder (the one with the README.md in) to your PYTHONPATH variable. 
 
 ## Using 
-The run the Tkinter GUI
+To run the Tkinter GUI for the MLX75027 Sensor
     
     python MLX75027_RegisterMap.py 
 
 The mlx75027.csv file contains the registers, there names and the default values. 
+
+To run the Tkinter GUI for the EPC660 Sensor 
+
+    python EPC660_RegisterMap.py
 
 The test cases can be run in the test folder 
 
@@ -25,7 +29,7 @@ The test cases can be run in the test folder
 
 ## Documentation 
 
-The version of the datasheet v0.8 that this tool was written for is provided in the doc folder for reference, as the datasheet might be updated by Melexis. 
+The MLX75027 version of the datasheet v0.8 that this tool was written for is provided in the doc folder for reference, as the datasheet might be updated by Melexis. 
 
 The MLX75027_RegisterMap.py opens a window as shown below 
 ![Scheme](doc/mainWindow.PNG)
@@ -58,6 +62,11 @@ For comment, assistance or bug reporting (or the correct interpretation of the d
 
 ## Features yet to support
 List of features not yet supported
+
+MLX75027
 * If selecting Flip or Mirror the ROI needs to be reversed 
 * Set the PN9 test pattern
 * Output the boot sequence registers 
+
+EPC660 
+* Binning in HDR or Dual Phase mode, the row and column calculation is currently not supported in these sensor modes. 
