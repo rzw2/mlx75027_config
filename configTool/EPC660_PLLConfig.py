@@ -218,12 +218,13 @@ class EPC660PLLViewer(tk.Toplevel):
         self.light_ph_text = tk.Label(self.master, text="Light Phase:")
         self.light_ph_text.grid(row=row_ind, column=0, stick=tk.E)
 
+        """
         self.light_ph_var = tk.IntVar()
         self.light_ph_check = tk.Checkbutton(self.master,
                                              text="enable",
-                                             variable=self.light_ph_var,
-                                             command=self.update_can)
+                                             variable=self.light_ph_var)  # command=self.update_can)
         self.light_ph_check.grid(row=row_ind, column=1, sticky=tk.E)
+        """
         self.light_ph = tk.Entry(self.master, bd=3)
         self.light_ph.grid(row=row_ind, column=2, sticky=tk.E+tk.W)
         row_ind += 1
@@ -380,27 +381,17 @@ class EPC660PLLViewer(tk.Toplevel):
         return
 
     def set_light_phase(self):
-        light_ph_enabled = (self.reg_dict["dll_crt"][2] == 4)
-        self.light_ph_var.set(light_ph_enabled)
         light_phase = epc_calc_light_phase(
             self.reg_dict, self.mclk, self.demod_clk)
         update_entry(self.light_ph, np.round(
-            light_phase, 1), not light_ph_enabled)
+            light_phase, 1), False)
         return
 
     def get_light_phase(self):
-        light_ph_enabled = self.light_ph_var.get()
-        if light_ph_enabled:
-            self.reg_dict["dll_crt"][2] = 4
-            phase_desired = float(self.light_ph.get())
-            epc_setup_light_phase(self.reg_dict,
-                                  phase_desired, self.mclk, self.demod_clk)
-        else:
-            self.reg_dict["dll_crt"][2] = 1
-            self.reg_dict["coarse_dll"][2] = 0
-            self.reg_dict["fine_dll_hi"][2] = 0
-            self.reg_dict["fine_dll_low"][2] = 0
 
+        phase_desired = float(self.light_ph.get())
+        epc_setup_light_phase(self.reg_dict,
+                              phase_desired, self.mclk, self.demod_clk)
         return
 
     def set_int_time(self):
