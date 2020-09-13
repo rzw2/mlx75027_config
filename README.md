@@ -47,12 +47,12 @@ The buttons do the following
 * Time : Opens another window to configure the depth frame timing 
 * Quit : Exits 
 
-The ROI GUI Window looks like the following 
-![Scheme](doc/roiWindow.PNG)
+The ROI GUI Window is shown in the below animation, the region of interest and binning can be configured.  
+![Scheme](doc/roiWindowGIF.gif)
 
-The Time GUI Window looks like the following 
-![Scheme](doc/timeWindow.PNG)
-Here the number of raw frames (phases) can be configured, the modulation frequency, MIPI speed, data type, etc. The integration time of each raw frame can be configured along with any dead frame time. 
+The Time GUI Window is shown in the below animation. 
+![Scheme](doc/timeWindowGIF.gif)
+Here the number of raw frames (phases) can be configured, the modulation frequency, MIPI speed, data type, etc. The integration time of each raw frame can be configured along with any dead frame time. This allow for configuration of each raw frame, it's integration time, and what datatype is exported. 
 
 ## Contact 
 
