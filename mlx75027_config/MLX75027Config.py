@@ -15,71 +15,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import numpy as np
 import warnings
 
-
-def reg16_to_value(reg_dict, reg0, reg1):
-    """
-    Convert the input two 8 bit registers to a single 16bit value 
-
-    Parameters
-    ----------
-    reg_dict : dict, the dictionary that contains all the register information 
-    reg0 : str, the name of the register in the dictionary of the low value 
-    reg1 : str, the name of the register in the dictionary of the high value 
-
-    Returns 
-    ----------
-    value : int, the combined 16bit value 
-    """
-    value = np.left_shift(reg_dict[reg1][2], 8) | reg_dict[reg0][2]
-    return value
-
-
-def reg_to_value(reg_dict, reg0, reg1, reg2, reg3):
-    value = np.left_shift(reg_dict[reg3][2], 24) | np.left_shift(
-        reg_dict[reg2][2], 16) | np.left_shift(reg_dict[reg1][2], 8) | reg_dict[reg0][2]
-    return value
-
-
-def value16_to_reg(reg_dict, value, hi_reg, low_reg):
-    val16 = np.uint16(value)
-    hi_val = np.right_shift(val16, 8)
-    low_val = val16 & 0x00FF
-    reg_dict[hi_reg][2] = hi_val
-    reg_dict[low_reg][2] = low_val
-    return
-
-
-def value32_to_reg(reg_dict, value, reg0, reg1, reg2, reg3):
-    # Write a value into difference registers
-    val32 = np.uint32(value)
-    val3 = np.right_shift(val32, 24) & 0xFF
-    val2 = np.right_shift(val32, 16) & 0xFF
-    val1 = np.right_shift(val32, 8) & 0xFF
-    val0 = val32 & 0xFF
-    #
-    reg_dict[reg0][2] = val0
-    reg_dict[reg1][2] = val1
-    reg_dict[reg2][2] = val2
-    reg_dict[reg3][2] = val3
-    return
-
-
-def reg24_to_value(reg_dict, reg0, reg1, reg2):
-    value = np.left_shift(reg_dict[reg2][2], 16) | np.left_shift(
-        reg_dict[reg1][2], 8) | reg_dict[reg0][2]
-    return value
-
-
-def value24_to_reg(reg_dict, value, reg0, reg1, reg2):
-    val32 = np.uint32(value)
-    val2 = np.right_shift(val32, 16) & 0xFF
-    val1 = np.right_shift(val32, 8) & 0xFF
-    val0 = val32 & 0xFF
-
-    reg_dict[reg0][2] = val0
-    reg_dict[reg1][2] = val1
-    reg_dict[reg2][2] = val2
-    return
+from mlx75027_config import value16_to_reg, value24_to_reg, value32_to_reg, reg24_to_value, reg16_to_value, reg_to_value
 
 
 def calc_binning(reg_dict):
@@ -380,7 +316,7 @@ def calc_int_times(reg_dict):
     px_int = np.zeros(8, dtype=np.uint32)
     for n in range(0, 8):
         px_int[n] = reg_to_value(reg_dict, "P"+str(n)+"_INT0", "P" +
-                                 str(n)+"_INT1", "P"+str(n)+"_INT2", "P"+str(n)+"_INT3")
+                                   str(n)+"_INT1", "P"+str(n)+"_INT2", "P"+str(n)+"_INT3")
 
     int_times = np.round((px_int) / 120)
     return int_times
@@ -392,8 +328,10 @@ def set_int_times(reg_dict, int_times):
 
     Parameters
     ----------
-    reg_dict : dict, the dictionary that contains all the register information 
-    int_times : np.array, the array of integration times in micro-seconds (us)
+    reg_dict : dict 
+        The dictionary that contains all the register information 
+    int_times : np.array 
+        The array of integration times in micro-seconds (us)
     """
 
     if np.size(int_times) > 8:
@@ -544,7 +482,7 @@ def set_pretime(reg_dict, pretime):
     hmax = calc_hmax(reg_dict, speed=speed)
 
     if pretime_enabled:
-        # TODO: Add warning for this Note : (𝐹𝐿𝑂𝑂𝑅(Px_PRETIME(in µs)∗120 ) HMAX ) + Px_INTEGRATION should not exceed 1ms.
+        # TODO: Add warning for this Note : FLOOR(Px_PRETIME_us*120)/HMAX) + Px_Integration should not exceed 1000us
         if reg_dict["OUTPUT_MODE"][2] == 4:
             pretime_reg = int(np.floor((pretime*120.0)/hmax) + 5)
         else:
@@ -1044,7 +982,7 @@ def calc_randnm7(reg_dict):
 
     if pretime_enabled:
         px_pretime = calc_pretime(reg_dict)
-        # As noted in 7.12. can be calculated as: 1070 + HMAX * FLOOR( ((Px_PRETIME(in µs)−11.13) / HMAX )* 120),𝑤𝑖𝑡ℎ Px_PRETIME ≥ 11.13
+        # As noted in 7.12. can be calculated as: 1070 + HMAX * FLOOR( ((Px_PRETIME(in us)−11.13) / HMAX )* 120), with Px_PRETIME >= 11.13
         if px_pretime >= 11.13:
             randnm7 = 1070 + hmax * np.floor(((px_pretime-11.13)/hmax) * 120)
         else:

@@ -20,6 +20,33 @@ from tkinter import messagebox
 import mlx75027_config as mlx
 
 
+def update_entry(entry, value, disable=False):
+    entry.config(state='normal')
+    entry.delete(0, tk.END)
+    entry.insert(0, str(value))
+    if disable:
+        entry.config(state='disabled')
+    return
+
+
+def get_entry(entry, min_val, max_val):
+    try:
+        value = float(entry.get())
+    except ValueError as er:
+        entry.configure(background="red")
+        raise er
+
+    if value < min_val:
+        entry.configure(background="red")
+        raise ValueError("Value out of range")
+    elif value > max_val:
+        entry.configure(background="red")
+        raise ValueError("Value out of range")
+
+    entry.configure(background="white")
+    return value
+
+
 class ResizingCanvas(tk.Canvas):
     def __init__(self, parent, **kwargs):
         tk.Canvas.__init__(self, parent, **kwargs)
@@ -264,38 +291,13 @@ class BaseROIViewer(tk.Toplevel):
         self.set_roi()
         return row_ind
 
-    def update_entry(self, entry, value, disable=False):
-        entry.config(state='normal')
-        entry.delete(0, tk.END)
-        entry.insert(0, str(value))
-        if disable:
-            entry.config(state='disabled')
-        return
-
-    def get_entry(self, entry, min_val, max_val):
-        try:
-            value = float(entry.get())
-        except ValueError as er:
-            entry.configure(background="red")
-            raise er
-
-        if value < min_val:
-            entry.configure(background="red")
-            raise ValueError("Value out of range")
-        elif value > max_val:
-            entry.configure(background="red")
-            raise ValueError("Value out of range")
-
-        entry.configure(background="white")
-        return value
-
     def set_roi(self):
         col_start, col_end, row_start, row_end = self.reg_to_roi()
 
-        self.update_entry(self.row_start_entry, row_start)
-        self.update_entry(self.row_end_entry, row_end)
-        self.update_entry(self.col_start_entry, col_start)
-        self.update_entry(self.col_end_entry, col_end)
+        update_entry(self.row_start_entry, row_start)
+        update_entry(self.row_end_entry, row_end)
+        update_entry(self.col_start_entry, col_start)
+        update_entry(self.col_end_entry, col_end)
         return
 
     def update_can(self):
@@ -311,42 +313,6 @@ class BaseROIViewer(tk.Toplevel):
         return
 
     def draw_roi(self):
-        # We want to draw the ROI on the canvas
-        wid = self.roi_can.width
-        hei = self.roi_can.height
-
-        # The offsets to the image areas
-        wo = 5.0
-        ho = 5.0
-        # The maximum valid pixels
-
-        # The maximum image sensor including dummy
-        max_hei = self.max_rows + 2*ho
-        max_wid = self.max_cols + 2*wo
-
-        col_start, col_end, row_start, row_end = self.reg_to_roi()
-        tag = "roi"
-        self.roi_can.delete(tag)
-        self.roi_can.create_rectangle(((col_start+wo)/max_wid)*wid,
-                                      ((row_start+ho)/max_hei)*hei,
-                                      ((col_end+wo)/max_wid)*wid,
-                                      ((row_end+ho)/max_hei)*hei,
-                                      width=2,
-                                      tag=tag,
-                                      outline='red')
-
-        tag = "all_pixels"
-        self.roi_can.delete(tag)
-        self.roi_can.create_rectangle((wo/max_wid)*wid,
-                                      (ho/max_hei)*hei,
-                                      (self.max_cols + wo)/max_wid * wid,
-                                      (self.max_rows + ho)/max_hei * hei,
-                                      width=1,
-                                      tag=tag)
-
-        # Would be good to add The other features, center lines etc
-        self.draw_active()
-
         return
 
     def gui_exit(self):

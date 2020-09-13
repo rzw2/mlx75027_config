@@ -9,6 +9,168 @@ import numpy as np
 import mlx75027_config as mlx
 
 
+class EPC660ConfigTest(unittest.TestCase):
+    def test_import_export(self):
+        """
+        Test the import and export functions of the CSV files 
+
+        """
+        import_file = os.path.join("..", "epc660.csv")
+        export_file = "epc660_export.csv"
+        if os.path.isfile(export_file):
+            os.remove(export_file)
+
+        self.assertTrue(os.path.isfile(import_file))
+
+        reg_dict = mlx.csv_import(import_file)
+
+        mlx.csv_export(export_file, reg_dict)
+        self.assertTrue(os.path.isfile(export_file))
+        self.assertTrue(filecmp.cmp(export_file, import_file, shallow=False))
+        os.remove(export_file)
+        return
+
+    def test_mod_frequency(self):
+        import_file = os.path.join("..", "epc660.csv")
+        self.assertTrue(os.path.isfile(import_file))
+        reg_dict = mlx.csv_import(import_file)
+        mclk = 96.0
+        demod_clk = 0.0
+
+        fmod = mlx.epc_calc_mod_freq(reg_dict, mclk, demod_clk)
+        self.assertEqual(fmod, mclk/8.0)
+
+        mlx.epc_set_mod_freq(reg_dict, 4.0, mclk)
+        fmod_update = mlx.epc_calc_mod_freq(reg_dict, mclk, demod_clk)
+        self.assertEqual(fmod_update, 4.0)
+
+        mlx.epc_set_mod_freq(reg_dict, 4.5, mclk)
+        fmod_update = mlx.epc_calc_mod_freq(reg_dict, mclk, demod_clk)
+        self.assertEqual(fmod_update, 4.8)
+        return
+
+    def test_dll_settings(self):
+        import_file = os.path.join("..", "epc660.csv")
+        self.assertTrue(os.path.isfile(import_file))
+        reg_dict = mlx.csv_import(import_file)
+        mclk = 96.0
+        demod_clk = 0.0
+        fmod = 24.0
+
+        mlx.epc_set_mod_freq(reg_dict, fmod, mclk)
+        phi = mlx.epc_calc_light_phase(reg_dict, mclk, demod_clk)
+        self.assertEqual(phi, 0.0)
+        dll_values = [0.0, 45.0, 90.0, 135.0, 180.0]
+        for phiX in dll_values:
+            mlx.epc_setup_light_phase(reg_dict, phiX, mclk, demod_clk)
+            phi_calc = mlx.epc_calc_light_phase(reg_dict, mclk, demod_clk)
+            self.assertEqual(np.round(phi_calc), phiX)
+
+            # Convert to radians, and set the same value in radians
+            rad = phiX * np.pi/180.0
+            mlx.epc_setup_light_phase(reg_dict, rad, mclk, demod_clk, True)
+            phi_calc = mlx.epc_calc_light_phase(reg_dict, mclk, demod_clk)
+            self.assertEqual(np.round(phi_calc), phiX)
+
+        return
+
+    def test_roi(self):
+        row_start = 6
+        row_end = 125
+        col_start = 4
+        col_end = 323
+
+        import_file = os.path.join("..", "epc660.csv")
+        self.assertTrue(os.path.isfile(import_file))
+        reg_dict = mlx.csv_import(import_file)
+        mclk = 96.0
+        demod_clk = 0.0
+
+        mlx.epc_set_roi(reg_dict, col_start, col_end, row_start, row_end)
+        nrows, ncols = mlx.epc_calc_img_size(reg_dict)
+
+        self.assertEqual(int(nrows), 240)
+        self.assertEqual(int(ncols), 320)
+
+        # Now set the binning options.
+        mlx.epc_set_bin_mode(reg_dict, True, True)
+        mlx.epc_set_binning(reg_dict, 0, 0)
+
+        nrows, ncols = mlx.epc_calc_img_size(reg_dict)
+        self.assertEqual(int(nrows), 240)
+        self.assertEqual(int(ncols), 320)
+
+        mlx.epc_set_binning(reg_dict, 0, 1)
+        nrows, ncols = mlx.epc_calc_img_size(reg_dict)
+        self.assertEqual(int(nrows), 240)
+        self.assertEqual(int(ncols), 160)
+
+        mlx.epc_set_binning(reg_dict, 1, 0)
+        nrows, ncols = mlx.epc_calc_img_size(reg_dict)
+        self.assertEqual(int(nrows), 120)
+        self.assertEqual(int(ncols), 320)
+
+        mlx.epc_set_binning(reg_dict, 2, 0)
+        nrows, ncols = mlx.epc_calc_img_size(reg_dict)
+        self.assertEqual(int(nrows), 60)
+        self.assertEqual(int(ncols), 320)
+
+        mlx.epc_set_binning(reg_dict, 3, 0)
+        nrows, ncols = mlx.epc_calc_img_size(reg_dict)
+        self.assertEqual(int(nrows), 30)
+        self.assertEqual(int(ncols), 320)
+
+        mlx.epc_set_bin_mode(reg_dict, False, True)
+        nrows, ncols = mlx.epc_calc_img_size(reg_dict)
+        self.assertEqual(int(nrows), 240)
+        self.assertEqual(int(ncols), 320)
+
+        # No binning
+        mlx.epc_set_bin_mode(reg_dict, False, False)
+
+        # Write some ROI values.
+        row_start = 6
+        row_end = 125
+        col_start = 104
+        col_end = 323
+
+        # First the columns
+        mlx.epc_set_roi(reg_dict, col_start, col_end, row_start, row_end)
+        # Verify what we read and write are the same
+        cs, ce, rs, re = mlx.epc_calc_roi(reg_dict)
+        self.assertEqual(rs, row_start)
+        self.assertEqual(re, row_end)
+        self.assertEqual(cs, col_start)
+        self.assertEqual(ce, col_end)
+
+        nrows, ncols = mlx.epc_calc_img_size(reg_dict)
+        self.assertEqual(int(nrows), 240)
+        self.assertEqual(int(ncols), 220)
+
+        # Write some row settings.
+        row_start = 56
+        row_end = 105
+        mlx.epc_set_roi(reg_dict, col_start, col_end, row_start, row_end)
+        cs, ce, rs, re = mlx.epc_calc_roi(reg_dict)
+        self.assertEqual(rs, row_start)
+        self.assertEqual(re, row_end)
+        self.assertEqual(cs, col_start)
+        self.assertEqual(ce, col_end)
+
+        nrows, ncols = mlx.epc_calc_img_size(reg_dict)
+        self.assertEqual(int(nrows), 100)
+        self.assertEqual(int(ncols), 220)
+        return
+
+    def test_int_times(self):
+        import_file = os.path.join("..", "epc660.csv")
+        self.assertTrue(os.path.isfile(import_file))
+        reg_dict = mlx.csv_import(import_file)
+
+        # Set no HDR
+        return
+
+
 class MLX75027ConfigTest(unittest.TestCase):
     def test_import_export(self):
         """
@@ -17,6 +179,8 @@ class MLX75027ConfigTest(unittest.TestCase):
         """
         import_file = os.path.join("..", "mlx75027.csv")
         export_file = "mlx75027_export.csv"
+        if os.path.isfile(export_file):
+            os.remove(export_file)
 
         self.assertTrue(os.path.isfile(import_file))
 
@@ -24,8 +188,8 @@ class MLX75027ConfigTest(unittest.TestCase):
 
         mlx.csv_export(export_file, reg_dict)
         self.assertTrue(os.path.isfile(export_file))
-
         self.assertTrue(filecmp.cmp(export_file, import_file, shallow=False))
+        os.remove(export_file)
         return
 
     def test_nlanes(self):

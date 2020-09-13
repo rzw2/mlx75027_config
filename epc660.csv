@@ -1,0 +1,126 @@
+Section,RegisterNumber,Bits,Property,Description,ValueMeaning,Value
+,0x0020,[4:0],reserved_20_0,,,0
+,0x0020,[5],i2c_a0,Strap input 0: I2C address A0,,0
+,0x0020,[6],i2c_a1,Strap input 1: I2C address A1,,0
+,0x0020,[7],Reserved_20_1,,,0
+,0x0022,[1:0],dcs_mgx0_0,"DCS number for mgx0 modulator (mga0, mgb0), all modes","00: DCS 0, 01: DCS 1, 10: DCS 2, 11: DCS 3. ",0
+,0x0022,[3:2],dcs_mgx1_0,"DCS number for mgx1 modulator (mga1, mgb1), dual modes only","00: DCS 0, 01: DCS 1, 10: DCS 2, 11: DCS 3. ",0
+,0x0022,[5:4],abs_0,Extended background suppression ABS. Refer to chapter 1.6 and 8.3.,"00: ABS disabled, Saturation detection not active, 01: reserved, 10: reserved, 11: ABS enabled ",3
+,0x0022,[7:6],Reserved_22,,,0
+,0x0024,[3:0],reserved_24,,,0
+,0x0024,[4],led_on_int_0,Modulation control 1 st frame. Refer to chapter 8.2.,"0: LED/LD is modulated, 1: LED/LD on during integration: Refer to IMPORTANT NOTE chapter 5.7",0
+,0x0024,[5],led_off_int_0,Modulation control 1 st frame. Refer to chapter 8.2.,"0: LED/LD is modulated, 1: LED/LD off during integration",0
+,0x0024,[7:6],Reserved_36,,,0
+,0x0025,[1:0],dcs_mgx0_1,"DCS number for mgx0 modulator (mga0, mgb0), all modes","00: DCS 0, 01: DCS 1, 10: DCS 2, 11: DCS 3. ",1
+,0x0025,[3:2],dcs_mgx1_1,"DCS number for mgx1 modulator (mga1, mgb1), dual modes only","00: DCS 0, 01: DCS 1, 10: DCS 2, 11: DCS 3. ",1
+,0x0025,[5:4],abs_1,Extended background suppression ABS. Refer to chapter 1.6 and 8.3.,"00: ABS disabled, Saturation detection not active, 01: reserved, 10: reserved, 11: ABS enabled ",3
+,0x0025,[7:6],Reserved_25,,,0
+,0x0027,[3:0],Reserved_27,,,0
+,0x0027,[4],led_on_int_1,Modulation control 1 st frame. Refer to chapter 8.2.,"0: LED/LD is modulated, 1: LED/LD on during integration: Refer to IMPORTANT NOTE chapter 5.7",0
+,0x0027,[5],led_off_int_1,Modulation control 1 st frame. Refer to chapter 8.2.,"0: LED/LD is modulated, 1: LED/LD off during integration",0
+,0x0027,[7:6],Reserved_39,,,0
+,0x0028,[1:0],dcs_mgx0_2,"DCS number for mgx0 modulator (mga0, mgb0), all modes","00: DCS 0, 01: DCS 1, 10: DCS 2, 11: DCS 3. ",2
+,0x0028,[3:2],dcs_mgx1_2,"DCS number for mgx1 modulator (mga1, mgb1), dual modes only","00: DCS 0, 01: DCS 1, 10: DCS 2, 11: DCS 3. ",2
+,0x0028,[5:4],abs_2,Extended background suppression ABS. Refer to chapter 1.6 and 8.3.,"00: ABS disabled, Saturation detection not active, 01: reserved, 10: reserved, 11: ABS enabled ",3
+,0x0028,[7:6],Reserved_40,,,0
+,0x002A,[3:0],Reserved_42_0,,,0
+,0x002A,[4],led_on_int_2,Modulation control 1 st frame. Refer to chapter 8.2.,"0: LED/LD is modulated, 1: LED/LD on during integration: Refer to IMPORTANT NOTE chapter 5.7",0
+,0x002A,[5],led_off_int_2,Modulation control 1 st frame. Refer to chapter 8.2.,"0: LED/LD is modulated, 1: LED/LD off during integration",0
+,0x002A,[7:6],Reserved_42_1,,,0
+,0x002B,[1:0],dcs_mgx0_3,"DCS number for mgx0 modulator (mga0, mgb0), all modes","00: DCS 0, 01: DCS 1, 10: DCS 2, 11: DCS 3. ",3
+,0x002B,[3:2],dcs_mgx1_3,"DCS number for mgx1 modulator (mga1, mgb1), dual modes only","00: DCS 0, 01: DCS 1, 10: DCS 2, 11: DCS 3. ",3
+,0x002B,[5:4],abs_3,Extended background suppression ABS. Refer to chapter 1.6 and 8.3.,"00: ABS disabled, Saturation detection not active, 01: reserved, 10: reserved, 11: ABS enabled ",3
+,0x002B,[7:6],Reserved_43,,,0
+,0x002D,[3:0],Reserved_45_0,,,0
+,0x002D,[4],led_on_int_3,Modulation control 1 st frame. Refer to chapter 8.2.,"0: LED/LD is modulated, 1: LED/LD on during integration: Refer to IMPORTANT NOTE chapter 5.7",0
+,0x002D,[5],led_off_int_3,Modulation control 1 st frame. Refer to chapter 8.2.,"0: LED/LD is modulated, 1: LED/LD off during integration",0
+,0x002D,[7:6],Reserved_45_1,,,0
+,0x003C,[0],reserved_3C_0,,,0
+,0x003C,[2:1],reserved_3C_1,,,3
+,0x003C,[3],reserved_3C_2,,,0
+,0x003C,[4],led_on_int_gray,Modulation control in grayscale mode. Refer to chapter 9.3 and Table 25.,"0: LED/LD is modulated, 1: LED/LD on during integration: Refer to IMPORTANT NOTE chapter 5.7",0
+,0x003C,[5],led_off_int_gray,Modulation control in grayscale mode. Refer to chapter 9.3 and Table 25.,"0: LED/LD is modulated, 1: LED/LD off during integration",1
+,0x003C,[7:6],reserved_3C_3,,,0
+,0x0060,[7:0],temp_tl_hi,"Temperature sensor top left, refer to chapter 10. Sum of 4 consecutive readings of the temperature sensor every 4th row reading",,0
+,0x0061,[7:0],temp_tl_low,"Temperature sensor top left, refer to chapter 10. Sum of 4 consecutive readings of the temperature sensor every 4th row reading",,0
+,0x0062,[7:0],temp_tr_hi,Temperature sensor top right. ,,0
+,0x0063,[7:0],temp_tr_low,Temperature sensor top right. ,,0
+,0x0064,[7:0],temp_bl_hi,Temperature sensor bottom left. ,,0
+,0x0065,[7:0],temp_bl_low,Temperature sensor bottom left. ,,0
+,0x0066,[7:0],temp_br_hi,Temperature sensor bottom right. ,,0
+,0x0067,[7:0],temp_br_low,Temperature sensor bottom right. ,,0
+,0x0071,[7:0],fine_dll_hi,Number of fine DLL delay steps to delay the LED output by approx. 10ps per step. Max. value is 799 (0x31F). Valid only if bit 2 in register 0xAE is enabled. Refer also to register 0xAE and chapter 5.8. Note: Delay is sensitive to VDD variations and noise.,,0
+,0x0072,[7:0],fine_dll_low,,,0
+,0x0073,[7:0],coarse_dll,Number of coarse DLL delay steps to delay the LED output by approx. 2ns per step. Max. value is 49 (0x31). Valid only if bit 2 in register 0xAE is enabled. Refer also to register 0xAE and chapter 5.8. Note: Delay is sensitive to VDD variations and noise.,,0
+,0x007D,[2:0],reserved_7D_0,,,0
+,0x007D,[2],enable_pll,Mode control. Used to go into low power mode fore mobile applications. See sec 11.5,"0: Disable, 1: Enable",1
+,0x007D,[7:3],reserved_7D_1,,,0
+,0x0080,[5:0],Reserved_80_0,,,63
+,0x0080,[6],mod_clk_src,Modulation clock source,"0: Internal modulation clock, 1: External clock from MODCLK input",0
+,0x0080,[7],reserved_80_1,,,0
+,0x0085,[4:0],mod_clk_div,Modulation clock divider provides clock to the LED/Pixel-field modulator/demodulator circuits by integer division of the internal PLL clock:,f mod_clk = 96MHz / (modulation clock divider + 1) Default: 96MHz / (0x01 + 0x01): f mod_clk = 48MHz Maximal value of modulation clock divider = 0x1F: f mod_clk = 3.0MHz. Note: The LED modulation frequency is 4 times lower than f mod_clk,1
+,0x0085,[7:5],Reserved_85_0,,,0
+,0x0089,[4:0],tcmi_clk_div,TCMI clock divider:,f tcmi_clk = 96MHz / (TCMI clock divider + 1) Default: 96MHz / (0x03 + 0x01) = 24MHz Minimal value of TCMI clock divider = 0x01 = 48.0MHz Maximal value of TCMI clock divider = 0x1F = 3.0MHz,3
+,0x0089,[6:5],reserved_89_0,,,0
+,0x0089,[7],dclk_skew,"Used to delay DCLK edge (typ. 2ns) to compensate PCB delays. Might be particularly useful when TCMI clock divider = 0 (divided by 1). When set normal, DCLK edge is centred with respect to other TCMI *SYNC*, DATA[7:0] outputs.","0: Disable, 1: Enable",0
+,0x008B,[7:0],pll_delay,Number of PLL clock periods delay of the demodulation signal path (all modulation modes). It can be used to insert a phase shift between modulation (LED) and demodulation (pixel). 1 PLL clock cycle is around 10.4ns @ 96MHz PLL clock. This is equivalent to a distance shift of 3.125m independent of the LED modulation frequency. Note: This phase shift is temperature independent. ,"0: no delay, 1: 1 clock, 2: 2 clock .. 12: 12 clocks (max. Value)",1
+,0x0090,[0],Reserved_90_0,,,0
+,0x0090,[1],led_invert,Inverts LED signal outputs LED and LED2,"0: not inverted, e.g. for LED = 0: LED output = VSSLED 1: inverted, e.g. for LED = 0: LED output = open-drain ",0
+,0x0090,[2],led_select,LED output select:,"0: disable, e.g. for not inverted signal: LED = open-drain, 1:  Enable",1
+,0x0090,[3],Reserved_90_1,,,1
+,0x0090,[4],led_permanent,"LED/LD permanently on (torch function, no modulation):","0: off, 1: on",0
+,0x0090,[5],led2_select,LED2 output select:,"0: disabled, e.g. for not inverted signal: LED2 = GND, 1: enabled",0
+,0x0090,[7:6],Reserved_90_2,,,3
+,0x0091,[1:0],Reserved_91_0,,,3
+,0x0091,[5:3],Reserved_91_1,,,0
+,0x0091,[6],hsync_rollover,Avoids readout rollover when using slower DCLKs e.g. DCLK < 31.2MHz. Stretches HSYNC for slower TCMI interface. Causes reduced DCS frame rate due to additional 2μs per ADC conversion (t conv + 2μs).,"0: disable for DCLK > 31.2MHz (default), 1: enable otherwise. Refer to Figure 27 and note above.",0
+,0x0092,[1:0],Reserved_92_0,,,0
+,0x0092,[2],Reserved_92_1,,,1
+,0x0092,[3],dual_int_mode,"Dual integration time mode a acquisition with 2 integration times per DCS frame using additionally integration length 2, registers 0x9E and 0x9F","0: Disable, 1: Enable",0
+,0x0092,[5:4],num_dcs,Number of DCS readouts select:,"00: Grayscale mode, DCS0 only. 01: Dual phase mode, DCS0, DCS1 or DCS2,DCS3. 10: reserved. 11: Full resolution mode or dual int. mode, DCS0, DCS1, DCS2, DCS3 ",3
+,0x0092,[7:6],mod_sel,Modulation select:,00: TOF mode. 01: reserved. 10: reserved. 11: Grayscale mode ,0
+,0x0094,[1:0],col_rudx,Column reduction: resolution on x-axis. Refer to chapter 8.2.5.,"0: no, 1: by half, 2: reserved, 3: reserved",0
+,0x0094,[3:2],row_rudy,Row reduction: resolution on y-axis. Refer to chapter 8.2.5,"0: no, 1: by half, 2: a quarter, 3: one eight",0
+,0x0094,[5:4],bin_mode,Pixel binning. Refer to chapter 8.2.4.,"0: no binning, 1: binning x-axis, 2: binning y-axis, 3: binning x and y",0
+,0x0094,[6],Reserved_94_0,,,0
+,0x0094,[7],pixel_mode,"Select pixel-field mode (refer to chapter 8.2.1, 8.2.2, 8.2.3)","0: Standard TOF mode: full resolution, 1: Dual modes: dual phase and dual integration time",0
+,0x0096,[7:0],roi_top_leftx_hi,ROI top left X setting. Refer to chapter 8.2.6.,,0
+,0x0097,[7:0],roi_top_leftx_low,ROI top left X setting. Refer to chapter 8.2.6.,,4
+,0x0098,[7:0],roi_bot_rightx_hi,ROI bottom right X setting.,,1
+,0x0099,[7:0],roi_bot_rightx_low,ROI bottom right X setting.,,67
+,0x009A,[7:0],roi_top_lefty,ROI top left Y setting.,,6
+,0x009B,[7:0],roi_bot_righty,ROI bottom right Y setting.,,125
+,0x009E,[7:0],int_len2_hi,"Integration length 2: Number of modulation clock periods for the second integration time in the dual integration time mode (refer to 8.2.3, default: 2'047). See registers 0xA2 and 0xA3 for functional definition details. Bit 3 in register 0x92 has to be set to 1 to enable this integration time for the even rows. The odd rows operate with the integration length 1 set in registers 0xA2 and 0xA3. ",,7
+,0x009F,[7:0],int_len2_low,,,255
+,0x00A0,[7:0],int_mult_hi,"Integration time multiplier (10 bit value) for integration lengths set with the integration length registers (default = 1, min. value = 1). This multiplier is active on both settings integration length 1 and 2. ",,0
+,0x00A1,[7:0],int_mult_low,,,1
+,0x00A2,[7:0],int_len_hi,"Integration length 1: Number of modulation clock periods for the (first in dual integration time mode ) integration time (16 bit value, default = 2'047, min. value = 7 which is integration time 167ns @ 12MHz). Integration time = Integration time multiplier * (Integration length +1) * t mod_clk e.g. for defaults @ 12MHz modulation clock = 42.6μs Note: (Integration length + 1) should be evenly divisible by 4. ",,7
+,0x00A3,[7:0],int_len_low,,,255
+,0x00A4,[0],shutter_release,Shutter release (single shot SW control),"0: disable 1: enable (auto cleared), starts acquisition Note: Shutter release is not auto-cleared when multiple frames is enable. ",0
+,0x00A4,[1],video_mode,Multiple frames (video mode). Refer to chapter 6.2.2.,"0: Disable, 1: Enable",0
+,0x00A4,[7:2],reserved_A4_0,,,0
+,0x00A5,[7:0],pwr_crt,Power control. Refer to chapter 11.5.,"0x00: Power off, 0x07: Power on ",7
+,0x00AE,[7:0],dll_crt,DLL control (Refer also to register 0x73 and chapter 5.8),0x01: no delay 0x04: delay manually set by register 0x73,1
+,0x00CA,[1:0],reserved_CA_0,"reserved, I 2 C address A1, A0 of 7-bit I 2 C device address. Programmable only during reset via strap pins using external pull-up resistors. ",,0
+,0x00CA,[6:2],i2c_addr,"I 2 C device address A6 ... A2 of 7-bit I 2 C device address. Programmable via direct access from I2C or from EEPROM during start up, fol- lowed by an I2C general call Device address reload to take it into effect.",,8
+,0x00CA,[7],reserved_CA_1,,,0
+,0x00CB,[0],i2c_clk_strech,I2C clock stretching,"0: Disable, 1: Enable",1
+,0x00CB,[1],i2c_spike,"I2C pins input spike filter. When I 2 C pins input spike filter = 0, SDA and SCL pins can be used up to 10MHz as inputs (driven rail-to-rail by a real CMOS driver, no pull-up) and up to 2MHz as outputs.","0: disabled (> 1MHz) 1: enabled ( 1MHz, FM+)",1
+,0x00CB,[3:2],reserved_CB_0,,,0
+,0x00CB,[5:4],transfer_mode,Transfer mode,00: Transfers 12 bit pixel data with 1x DCLK (default). 01: Transfers the 8 MSB bits of the pixel data with 1x DCLK. Data are LSB aligned. 10: lsb/msb split mode: Transfers 12 bit pixel data with LSByte leading and MS- Byte trailing with 2x DCLK. Data are LSB aligned (default). The optional SAT bit is on the LSB. 11: msb/lsb split mode: Transfers 12 bit pixel data with MSByte leading and LS- Byte trailing with 2x DCLK. Data are LSB aligned. The optional SAT bit is on the LSB.,0
+,0x00CB,[6],data_force,"When split modes selected (= 11 or 10), forces bit DATA[0] of the LSByte = 1 when the pixel is saturated. Not effective with other TCMI data formats.",0: disabled 1: enabled,0
+,0x00CB,[7],reserved_CB_1,,,0
+,0x00CC,[0],dclk_edge,DCLK edge select to align all other TCMI outputs,0: falling edge 1: rising edge,1
+,0x00CC,[1],hsync_pol,HSYNC polarity,0: HSYNC active low 1: HSYNC active high,0
+,0x00CC,[2],vsync_pol,VSYNC polarity,0: VSYNC active low 1: VSYNC active high,0
+,0x00CC,[3],xsync_pol,"XSYNC polarity. Only effective when bit 6 is set to 0
+",0: XSYNC active low 1: XSYNC active high,0
+,0x00CC,[4],data_sign,DATA[11:0] unsigned/signed TCMI data output format,"0: unsigned integer, subtract 2'048 to get correct value (Default) 1: two's complement signed integer (-2048 ... 2047)",0
+,0x00CC,[5],reserved_CC_0,,,0
+,0x00CC,[6],xsync_mode,Select XSYNC / SAT output pin function,0: XSYNC 1: SAT,1
+,0x00CC,[7],force_sat,"Force DATA[11:0] = 0xFFF (unsigned) / 0x7FF (signed, two's complement) during data-out operation when corresponding pixel is saturated",0: disabled 1: enabled,0
+,0x00E8,[7:0],temp_cor_tl,Temperature offset correction for sensor top left. Value for calculation according the formula in chapter 10 by the application SW. Range approx. -27 ... +27oC with around 0.2oC steps. The reference temperature is +27C. 0x7F (127) corresponds to 0oC offset. 0xFF: Function is not supported.,,0
+,0x00E9,[7:0],dll_step,"DLL step. Supported for Wafer IDs 212 or higher. Refer for details to register 0x73 and Figure 20. The exact value is t DLL = ((register 0xE9 -128) * 0.003ns) + 2.1ns (at +27oC, V DD ,V DDPLL = 1.8V). 0xFF: Function is not supported.",,0
+,0x00EA,[7:0],temp_cor_tr,Temperature offset correction for sensor top left. Value for calculation according the formula in chapter 10 by the application SW. Range approx. -27 ... +27oC with around 0.2oC steps. The reference temperature is +27C. 0x7F (127) corresponds to 0oC offset. 0xFF: Function is not supported.,,0
+,0x00EC,[7:0],temp_cor_bl,Temperature offset correction for sensor top left. Value for calculation according the formula in chapter 10 by the application SW. Range approx. -27 ... +27oC with around 0.2oC steps. The reference temperature is +27C. 0x7F (127) corresponds to 0oC offset. 0xFF: Function is not supported.,,0
+,0x00EE,[7:0],temp_cor_br,Temperature offset correction for sensor top left. Value for calculation according the formula in chapter 10 by the application SW. Range approx. -27 ... +27oC with around 0.2oC steps. The reference temperature is +27C. 0x7F (127) corresponds to 0oC offset. 0xFF: Function is not supported.,,0

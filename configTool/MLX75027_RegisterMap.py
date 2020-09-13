@@ -23,6 +23,7 @@ from tkinter import messagebox
 
 from ToFSensorConfiguration import RegisterViewer
 from ToFSensorConfiguration import BaseROIViewer
+from ToFSensorConfiguration import get_entry, update_entry
 import mlx75027_config as mlx
 
 
@@ -366,9 +367,9 @@ class MLX75027TimeViewer(tk.Toplevel):
     def get_nraw(self):
         nraw = int(float(self.nraw_var.get()))
         mlx.set_nraw(self.reg_dict, nraw)
-        fmod = self.get_entry(self.fmod_entry, 4.0, 100.0)
+        fmod = get_entry(self.fmod_entry, 4.0, 100.0)
         mlx.set_mod_freq(self.reg_dict, fmod)
-        mlx.set_duty_cycle(self.reg_dict, self.get_entry(
+        mlx.set_duty_cycle(self.reg_dict, get_entry(
             self.duty_cycle_entry, 0.0, 1.0))
         return
 
@@ -376,17 +377,17 @@ class MLX75027TimeViewer(tk.Toplevel):
         nraw = mlx.calc_nraw(self.reg_dict)
         self.nraw_var.set(nraw)
         fmod = mlx.calc_mod_freq(self.reg_dict)
-        self.update_entry(self.fmod_entry, fmod)
-        self.update_entry(self.duty_cycle_entry,
-                          mlx.calc_duty_cycle(self.reg_dict))
+        update_entry(self.fmod_entry, fmod)
+        update_entry(self.duty_cycle_entry,
+                     mlx.calc_duty_cycle(self.reg_dict))
         return
 
     def set_frame(self):
-        self.update_entry(self.frame_startup_entry,
-                          mlx.calc_startup_time(self.reg_dict))
-        self.update_entry(self.frame_dead_entry,
-                          mlx.calc_deadtime(self.reg_dict))
-        self.update_entry(self.pretime_entry, mlx.calc_pretime(self.reg_dict))
+        update_entry(self.frame_startup_entry,
+                     mlx.calc_startup_time(self.reg_dict))
+        update_entry(self.frame_dead_entry,
+                     mlx.calc_deadtime(self.reg_dict))
+        update_entry(self.pretime_entry, mlx.calc_pretime(self.reg_dict))
 
         int_times = mlx.calc_int_times(self.reg_dict)
         pretimes = mlx.calc_all_pretimes(self.reg_dict)
@@ -397,9 +398,9 @@ class MLX75027TimeViewer(tk.Toplevel):
             else:
                 disable = False
 
-            self.update_entry(
+            update_entry(
                 self.inttime_entrys[n], int_times[n], disable=disable)
-            self.update_entry(
+            update_entry(
                 self.pretime_entrys[n], pretimes[n], disable=True)
 
             heat = self.reg_dict["Px_PREHEAT"][2] & (1 << n)
@@ -432,24 +433,24 @@ class MLX75027TimeViewer(tk.Toplevel):
             self.phi_vars[n].set(
                 self.phi_shifts[self.reg_dict["P"+str(n)+"_PHASE_SHIFT"][2]])
 
-            self.update_entry(self.idle_entrys[n], idle_times[n])
+            update_entry(self.idle_entrys[n], idle_times[n])
 
         frame_time = mlx.calc_frame_time(self.reg_dict)
         depth_fps, raw_fps = mlx.calc_fps(self.reg_dict)
 
-        self.update_entry(self.frame_fps_entry, depth_fps, disable=True)
-        self.update_entry(self.frame_time_entry, frame_time, disable=True)
+        update_entry(self.frame_fps_entry, depth_fps, disable=True)
+        update_entry(self.frame_time_entry, frame_time, disable=True)
 
         return
 
     def get_frame(self):
-        startup_time = self.get_entry(self.frame_startup_entry, 0, 2**32)
+        startup_time = get_entry(self.frame_startup_entry, 0, 2**32)
         mlx.set_startup_time(self.reg_dict, startup_time)
 
-        dead_time = self.get_entry(self.frame_dead_entry, 0, 2**32)
+        dead_time = get_entry(self.frame_dead_entry, 0, 2**32)
         mlx.set_deadtime(self.reg_dict, dead_time)
 
-        pre_time = self.get_entry(self.pretime_entry, 0, 2**32)
+        pre_time = get_entry(self.pretime_entry, 0, 2**32)
         mlx.set_pretime(self.reg_dict, pre_time)
 
         heat_all = np.uint8(0)
@@ -458,7 +459,7 @@ class MLX75027TimeViewer(tk.Toplevel):
 
         int_times = np.zeros(8)
         for n in range(0, 8):
-            int_times[n] = self.get_entry(self.inttime_entrys[n], 0, 2**32)
+            int_times[n] = get_entry(self.inttime_entrys[n], 0, 2**32)
 
             heat = int(self.preheat_vars[n].get()) << n
             heat_all = heat_all | np.uint8(heat)
@@ -548,31 +549,6 @@ class MLX75027TimeViewer(tk.Toplevel):
         """
         return
 
-    def update_entry(self, entry, value, disable=False):
-        entry.config(state='normal')
-        entry.delete(0, tk.END)
-        entry.insert(0, str(value))
-        if disable:
-            entry.config(state='disabled')
-        return
-
-    def get_entry(self, entry, min_val, max_val):
-        try:
-            value = float(entry.get())
-        except ValueError as er:
-            entry.configure(background="red")
-            raise er
-
-        if value < min_val:
-            entry.configure(background="red")
-            raise ValueError("Value out of range")
-        elif value > max_val:
-            entry.configure(background="red")
-            raise ValueError("Value out of range")
-
-        entry.configure(background="white")
-        return value
-
     def update_can(self):
         self.get_mipi()
         self.get_nraw()
@@ -646,10 +622,10 @@ class MLX75027ROIViewer(BaseROIViewer, tk.Toplevel):
         return mlx.calc_roi(self.reg_dict)
 
     def get_roi(self):
-        col_start = int(self.get_entry(self.col_start_entry, 1, 640))
-        col_end = int(self.get_entry(self.col_end_entry, 1, 640))
-        row_start = int(self.get_entry(self.row_start_entry, 1, 482))
-        row_end = int(self.get_entry(self.row_end_entry, 1, 482))
+        col_start = int(get_entry(self.col_start_entry, 1, 640))
+        col_end = int(get_entry(self.col_end_entry, 1, 640))
+        row_start = int(get_entry(self.row_start_entry, 1, 482))
+        row_end = int(get_entry(self.row_end_entry, 1, 482))
 
         if row_start > row_end:
             raise ValueError("Row readout must start before end")
@@ -757,13 +733,53 @@ class MLX75027ROIViewer(BaseROIViewer, tk.Toplevel):
 
         # Update the start and end values based on our new values
         mlx.set_roi(self.reg_dict, col_start, col_end, row_start, row_end)
-        self.update_entry(self.col_start_entry, col_start)
-        self.update_entry(self.col_end_entry, col_end)
-        self.update_entry(self.row_start_entry, row_start)
-        self.update_entry(self.row_end_entry, row_end)
+        update_entry(self.col_start_entry, col_start)
+        update_entry(self.col_end_entry, col_end)
+        update_entry(self.row_start_entry, row_start)
+        update_entry(self.row_end_entry, row_end)
 
-        self.update_entry(self.nrows_entry, nrows, disable=True)
-        self.update_entry(self.ncols_entry, ncols, disable=True)
+        update_entry(self.nrows_entry, nrows, disable=True)
+        update_entry(self.ncols_entry, ncols, disable=True)
+        return
+
+    def draw_roi(self):
+
+        # We want to draw the ROI on the canvas
+        wid = self.roi_can.width
+        hei = self.roi_can.height
+
+        # The offsets to the image areas
+        wo = 5.0
+        ho = 5.0
+        # The maximum valid pixels
+
+        # The maximum image sensor including dummy
+        max_hei = self.max_rows + 2*ho
+        max_wid = self.max_cols + 2*wo
+
+        col_start, col_end, row_start, row_end = self.reg_to_roi()
+        tag = "roi"
+        self.roi_can.delete(tag)
+        self.roi_can.create_rectangle(((col_start+wo)/max_wid)*wid,
+                                      ((row_start+ho)/max_hei)*hei,
+                                      ((col_end+wo)/max_wid)*wid,
+                                      ((row_end+ho)/max_hei)*hei,
+                                      width=2,
+                                      tag=tag,
+                                      outline='red')
+
+        tag = "all_pixels"
+        self.roi_can.delete(tag)
+        self.roi_can.create_rectangle((wo/max_wid)*wid,
+                                      (ho/max_hei)*hei,
+                                      (self.max_cols + wo)/max_wid * wid,
+                                      (self.max_rows + ho)/max_hei * hei,
+                                      width=1,
+                                      tag=tag)
+
+        # Would be good to add The other features, center lines etc
+        self.draw_active()
+
         return
 
 
@@ -847,7 +863,7 @@ if __name__ == "__main__":
     root = tk.Tk()
     if not os.path.isfile(infile):
         infile = filedialog.askopenfilename(title="Select Registers", filetypes=(
-            ('Binary Files', '*.csv'), ('all files', '*.*')))
+            ('CSV Files', '*.csv'), ('all files', '*.*')))
         if not infile:
             raise RuntimeError("ERROR: Can not find register map file:")
 
