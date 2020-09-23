@@ -29,6 +29,8 @@ col_end = 640
 binning = 0
 # Output mode of A-B
 output_mode = 0
+# We are using the VGA image sensor
+mlx75027 = True
 
 csvFile = os.path.join("..", "mlx75027.csv")
 
@@ -36,12 +38,12 @@ csvFile = os.path.join("..", "mlx75027.csv")
 reg_dict = mlx.csv_import(csvFile)
 mlx.set_nlanes(reg_dict, nlanes)
 mlx.set_output_mode(reg_dict, output_mode)
-hmax = mlx.calc_hmax(reg_dict, speed=speed)
+hmax = mlx.calc_hmax(reg_dict, mlx75027, speed=speed)
 mlx.set_hmax(reg_dict, hmax)
-mlx.set_roi(reg_dict, col_start, col_end, row_start, row_end)
+mlx.set_roi(reg_dict, col_start, col_end, row_start, row_end, mlx75027)
 mlx.set_mod_freq(reg_dict, mod_freq)
 mlx.set_nraw(reg_dict, nphases)
-mlx.set_int_times(reg_dict, int_times)
+mlx.set_int_times(reg_dict, int_times, mlx75027)
 mlx.set_binning(reg_dict, binning)
 mlx.set_duty_cycle(reg_dict, duty_cycle)
 mlx.set_phase_shift(reg_dict, phase_steps)

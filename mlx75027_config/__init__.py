@@ -19,6 +19,7 @@ from mlx75027_config.MLX75027Config import calc_nraw, set_nraw, calc_phase_shift
 from mlx75027_config.MLX75027Config import calc_leden, set_leden, set_frame_time
 from mlx75027_config.MLX75027Config import calc_preheat, set_preheat, calc_premix, set_premix, set_phase_shift
 from mlx75027_config.MLX75027Config import calc_nlanes, set_nlanes, set_hmax, calc_output_mode, set_output_mode
+from mlx75027_config.MLX75027Config import calc_analog_delay, set_analog_delay
 
 # The EPC660 functions
 from mlx75027_config.EPC660Config import epc_calc_mod_freq, epc_calc_phase_steps, epc_calc_int_times, epc_set_int_times, epc_calc_roi_coordinates

@@ -241,14 +241,34 @@ class EPC660ConfigTest(unittest.TestCase):
         return
 
 
-class MLX75027ConfigTest(unittest.TestCase):
-    def test_import_export(self):
-        """
-        Test the import and export functions of the CSV files 
+class MLX75026ConfigTest(unittest.TestCase):
+    def test_delay_times(self):
+        import_file = os.path.join("..", "mlx75026.csv")
+        self.assertTrue(os.path.isfile(import_file))
+        reg_dict = mlx.csv_import(import_file)
 
-        """
-        import_file = os.path.join("..", "mlx75027.csv")
-        export_file = "mlx75027_export.csv"
+        mlx75027 = False
+        delay_time = mlx.calc_analog_delay(reg_dict)
+        self.assertEqual(delay_time, 0)
+
+        fmods = [34.0, 50.0, 80.0, 100.0]
+        for fmod in fmods:
+            period = 1.0 / fmod
+            mlx.set_mod_freq(reg_dict, fmod)
+
+            delays = [1.0, 1.5, 2.0, 4.0, 8.0, 10.0, 16.0]
+            for delay in delays:
+                delay_us = period / delay
+                mlx.set_analog_delay(reg_dict, delay_us)
+
+                delay_actual = mlx.calc_analog_delay(reg_dict)
+                self.assertAlmostEqual(delay_actual, delay_us, places=4)
+        return
+
+
+class MLX75027ConfigTest(unittest.TestCase):
+
+    def import_export(self, import_file, export_file):
         if os.path.isfile(export_file):
             os.remove(export_file)
 
@@ -260,6 +280,20 @@ class MLX75027ConfigTest(unittest.TestCase):
         self.assertTrue(os.path.isfile(export_file))
         self.assertTrue(filecmp.cmp(export_file, import_file, shallow=False))
         os.remove(export_file)
+
+    def test_import_export(self):
+        """
+        Test the import and export functions of the CSV files 
+
+        """
+        import_file = os.path.join("..", "mlx75027.csv")
+        export_file = "mlx75027_export.csv"
+
+        self.import_export(import_file, export_file)
+
+        import_file = os.path.join("..", "mlx75026.csv")
+        export_file = "mlx75026_export.csv"
+        self.import_export(import_file, export_file)
         return
 
     def test_nlanes(self):
@@ -295,6 +329,7 @@ class MLX75027ConfigTest(unittest.TestCase):
         import_file = os.path.join("..", "mlx75027.csv")
         self.assertTrue(os.path.isfile(import_file))
         reg_dict = mlx.csv_import(import_file)
+        mlx75027 = True
         nlanes = 4
         output_mode = 0
 
@@ -305,7 +340,7 @@ class MLX75027ConfigTest(unittest.TestCase):
         mlx.set_nlanes(reg_dict, nlanes)
 
         for speed in zip(speeds, hmax_expected):
-            hmax = mlx.calc_hmax(reg_dict, speed=speed[0])
+            hmax = mlx.calc_hmax(reg_dict, mlx75027, speed=speed[0])
             # Verify correct calculation
             self.assertEqual(hmax, speed[1])
             mlx.set_hmax(reg_dict, hmax)
@@ -315,7 +350,7 @@ class MLX75027ConfigTest(unittest.TestCase):
         mlx.set_nlanes(reg_dict, nlanes)
         hmax_expected = [0x0E60, 0x0744, 0x0636, 0x057A, 0x0514]
         for speed in zip(speeds, hmax_expected):
-            hmax = mlx.calc_hmax(reg_dict, speed=speed[0])
+            hmax = mlx.calc_hmax(reg_dict, mlx75027, speed=speed[0])
             # Verify correct calculation
             self.assertEqual(hmax, speed[1])
 
@@ -324,7 +359,7 @@ class MLX75027ConfigTest(unittest.TestCase):
         mlx.set_output_mode(reg_dict, output_mode)
         hmax_expected = [0x1CC0, 0x0E88, 0x0C6C, 0x0AF4, 0x0A28]
         for speed in zip(speeds, hmax_expected):
-            hmax = mlx.calc_hmax(reg_dict, speed=speed[0])
+            hmax = mlx.calc_hmax(reg_dict, mlx75027, speed=speed[0])
             # Verify correct calculation
             self.assertEqual(hmax, speed[1])
 
@@ -332,7 +367,7 @@ class MLX75027ConfigTest(unittest.TestCase):
         mlx.set_nlanes(reg_dict, nlanes)
         hmax_expected = [0x0E60, 0x0744, 0x0636, 0x057A, 0x0514]
         for speed in zip(speeds, hmax_expected):
-            hmax = mlx.calc_hmax(reg_dict, speed=speed[0])
+            hmax = mlx.calc_hmax(reg_dict, mlx75027, speed=speed[0])
             # Verify correct calculation
             self.assertEqual(hmax, speed[1])
 
@@ -344,22 +379,22 @@ class MLX75027ConfigTest(unittest.TestCase):
 
         Also need to verify the timing calculations if preheat is used or not. 
 
-        XXX : TODO 
         """
 
         import_file = os.path.join("..", "mlx75027.csv")
         self.assertTrue(os.path.isfile(import_file))
         reg_dict = mlx.csv_import(import_file)
+        mlx75027 = True
 
-        pretime = mlx.calc_pretime(reg_dict)
+        pretime = mlx.calc_pretime(reg_dict, mlx75027)
 
         # Set some preheat on
         preheat = np.zeros(8, dtype=np.bool)
         preheat[0] = True
         mlx.set_preheat(reg_dict, preheat)
 
-        mlx.set_pretime(reg_dict, pretime)
-        pretime1 = mlx.calc_pretime(reg_dict)
+        mlx.set_pretime(reg_dict, pretime, mlx75027)
+        pretime1 = mlx.calc_pretime(reg_dict, mlx75027)
         self.assertEqual(pretime, pretime1)
         return
 
@@ -368,6 +403,7 @@ class MLX75027ConfigTest(unittest.TestCase):
         Test the region of interest 
         """
         import_file = os.path.join("..", "mlx75027.csv")
+        mlx75027 = True
         self.assertTrue(os.path.isfile(import_file))
         reg_dict = mlx.csv_import(import_file)
 
@@ -375,7 +411,8 @@ class MLX75027ConfigTest(unittest.TestCase):
         col_end = 640
         row_offset = 1
         col_offset = 1
-        mlx.set_roi(reg_dict, col_offset, col_end, row_offset, row_end)
+        mlx.set_roi(reg_dict, col_offset, col_end,
+                    row_offset, row_end, mlx75027)
 
         cs, ce, rs, re = mlx.calc_roi(reg_dict)
         self.assertEqual(row_offset, rs)
@@ -385,13 +422,15 @@ class MLX75027ConfigTest(unittest.TestCase):
 
         row_offset = 0
         with self.assertRaises(RuntimeError):
-            mlx.set_roi(reg_dict, col_offset, col_end, row_offset, row_end)
+            mlx.set_roi(reg_dict, col_offset, col_end,
+                        row_offset, row_end, mlx75027)
 
         row_offset = 51
         row_end = 240
         col_offset = 50
         col_end = 150
-        mlx.set_roi(reg_dict, col_offset, col_end, row_offset, row_end)
+        mlx.set_roi(reg_dict, col_offset, col_end,
+                    row_offset, row_end, mlx75027)
         cs, ce, rs, re = mlx.calc_roi(reg_dict)
         self.assertEqual(row_offset, rs)
         self.assertEqual(col_offset, cs)

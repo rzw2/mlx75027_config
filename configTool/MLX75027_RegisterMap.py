@@ -13,6 +13,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import os
 import copy
 import platform
+import argparse
 
 import numpy as np
 from PIL import Image, ImageTk
@@ -37,15 +38,21 @@ def cal_scale(canvas_size, img_size):
 
 
 class MLX75027TimeViewer(tk.Toplevel):
-    def __init__(self, master, reg_dict):
+    def __init__(self, master, reg_dict, mlx75027):
         # We want to do the timing stuff here
         self.master = master
+        self._mlx75027 = mlx75027
+        if mlx75027:
+            sensor_str = "MLX75027"
+        else:
+            sensor_str = "MLX75026"
+
         os_name = platform.system()
         if os_name == "Windows":
             self.master.iconbitmap('Chronoptics.ico')
         else:
             self.master.iconbitmap('@Chronoptics.xbm')
-        self.master.wm_title("Chronoptics - MLX75027 Time Configure")
+        self.master.wm_title("Chronoptics - " + sensor_str + " Time Configure")
         self.master.protocol("WM_DELETE_WINDOW", self.gui_exit)
 
         # Do the resize
@@ -384,14 +391,15 @@ class MLX75027TimeViewer(tk.Toplevel):
 
     def set_frame(self):
         update_entry(self.frame_startup_entry,
-                     mlx.calc_startup_time(self.reg_dict))
+                     mlx.calc_startup_time(self.reg_dict, self._mlx75027))
         update_entry(self.frame_dead_entry,
-                     mlx.calc_deadtime(self.reg_dict))
-        update_entry(self.pretime_entry, mlx.calc_pretime(self.reg_dict))
+                     mlx.calc_deadtime(self.reg_dict, self._mlx75027))
+        update_entry(self.pretime_entry, mlx.calc_pretime(
+            self.reg_dict, self._mlx75027))
 
         int_times = mlx.calc_int_times(self.reg_dict)
-        pretimes = mlx.calc_all_pretimes(self.reg_dict)
-        idle_times = mlx.calc_idle_time(self.reg_dict)
+        pretimes = mlx.calc_all_pretimes(self.reg_dict, self._mlx75027)
+        idle_times = mlx.calc_idle_time(self.reg_dict, self._mlx75027)
         for n in range(0, 8):
             if (n+1) > mlx.calc_nraw(self.reg_dict):
                 disable = True
@@ -435,8 +443,8 @@ class MLX75027TimeViewer(tk.Toplevel):
 
             update_entry(self.idle_entrys[n], idle_times[n])
 
-        frame_time = mlx.calc_frame_time(self.reg_dict)
-        depth_fps, raw_fps = mlx.calc_fps(self.reg_dict)
+        frame_time = mlx.calc_frame_time(self.reg_dict, self._mlx75027)
+        depth_fps, raw_fps = mlx.calc_fps(self.reg_dict, self._mlx75027)
 
         update_entry(self.frame_fps_entry, depth_fps, disable=True)
         update_entry(self.frame_time_entry, frame_time, disable=True)
@@ -445,13 +453,13 @@ class MLX75027TimeViewer(tk.Toplevel):
 
     def get_frame(self):
         startup_time = get_entry(self.frame_startup_entry, 0, 2**32)
-        mlx.set_startup_time(self.reg_dict, startup_time)
+        mlx.set_startup_time(self.reg_dict, startup_time, self._mlx75027)
 
         dead_time = get_entry(self.frame_dead_entry, 0, 2**32)
-        mlx.set_deadtime(self.reg_dict, dead_time)
+        mlx.set_deadtime(self.reg_dict, dead_time, self._mlx75027)
 
         pre_time = get_entry(self.pretime_entry, 0, 2**32)
-        mlx.set_pretime(self.reg_dict, pre_time)
+        mlx.set_pretime(self.reg_dict, pre_time, self._mlx75027)
 
         heat_all = np.uint8(0)
         mix_all = np.uint8(0)
@@ -500,13 +508,13 @@ class MLX75027TimeViewer(tk.Toplevel):
         self.reg_dict["Px_PREMIX"][2] = mix_all
         self.reg_dict["Px_LEDEN"][2] = leden_all
 
-        mlx.set_int_times(self.reg_dict, int_times)
+        mlx.set_int_times(self.reg_dict, int_times, self._mlx75027)
 
         return
 
     def set_mipi(self):
         # Update the MIPI display
-        speed = mlx.calc_speed(self.reg_dict)
+        speed = mlx.calc_speed(self.reg_dict, self._mlx75027)
         lane_ind = self.reg_dict["DATA_LANE_CONFIG"][2]
         mode_ind = self.reg_dict["OUTPUT_MODE"][2]
 
@@ -523,14 +531,14 @@ class MLX75027TimeViewer(tk.Toplevel):
         self.reg_dict["DATA_LANE_CONFIG"][2] = self.mipi_lanes.index(lane)
         self.reg_dict["OUTPUT_MODE"][2] = self.data_modes.index(mode)
         # Now update HMAX for the request speed.
-        hmax = mlx.calc_hmax(self.reg_dict, speed=speed)
+        hmax = mlx.calc_hmax(self.reg_dict, self._mlx75027, speed=speed)
         #print("get_mipi() hmax: " + str(hmax) + " speed: " + str(speed))
         mlx.set_hmax(self.reg_dict, hmax)
 
         return
 
     def get_updates(self):
-        pll_setup = mlx.calc_pll_setup(self.reg_dict)
+        pll_setup = mlx.calc_pll_setup(self.reg_dict, self._mlx75027)
         """
         pix_rst = mlx.calc_pretime(self.reg_dict)
         randnm7 = mlx.calc_randnm7(self.reg_dict)
@@ -566,12 +574,22 @@ class MLX75027TimeViewer(tk.Toplevel):
 
 
 class MLX75027ROIViewer(BaseROIViewer, tk.Toplevel):
-    def __init__(self, master, reg_dict):
+    def __init__(self, master, reg_dict, mlx75027):
         row_ind = BaseROIViewer.__init__(self, master, reg_dict)
-        self.master.wm_title("Chronoptics - MLX27025 ROI Configure")
 
-        self.max_rows = 480.0
-        self.max_cols = 640.0
+        self._mlx75027 = mlx75027
+        if mlx75027:
+            sensor_str = "MLX75027"
+        else:
+            sensor_str = "MLX75026"
+        self.master.wm_title("Chronoptics - " + sensor_str + "ROI Configure")
+
+        if mlx75027:
+            self.max_rows = 480.0
+            self.max_cols = 640.0
+        else:
+            self.max_rows = 240.0
+            self.max_cols = 320.0
 
         tk.Grid.columnconfigure(self.master, 0, weight=1)
         tk.Grid.columnconfigure(self.master, 1, weight=1)
@@ -582,7 +600,11 @@ class MLX75027ROIViewer(BaseROIViewer, tk.Toplevel):
         tk.Grid.rowconfigure(self.master, 0, weight=1)
 
         # Now setup the binning mode
-        bin_opts = ["VGA", "QVGA", "QQVGA", "QQQVGA"]
+        if self._mlx75027:
+            bin_opts = ["VGA", "QVGA", "QQVGA", "QQQVGA"]
+        else:
+            bin_opts = ["QVGA", "QQVGA", "QQQVGA", "QQQQVGA"]
+
         self.bin_text = tk.Label(self.master, text="Bin")
         self.bin_var = tk.StringVar(self.master)
         self.bin_option = tk.OptionMenu(self.master, self.bin_var, *bin_opts)
@@ -622,10 +644,16 @@ class MLX75027ROIViewer(BaseROIViewer, tk.Toplevel):
         return mlx.calc_roi(self.reg_dict)
 
     def get_roi(self):
-        col_start = int(get_entry(self.col_start_entry, 1, 640))
-        col_end = int(get_entry(self.col_end_entry, 1, 640))
-        row_start = int(get_entry(self.row_start_entry, 1, 482))
-        row_end = int(get_entry(self.row_end_entry, 1, 482))
+        if self._mlx75027:
+            max_col = 640
+            max_row = 482
+        else:
+            max_col = 320
+            max_row = 241
+        col_start = int(get_entry(self.col_start_entry, 1, max_col))
+        col_end = int(get_entry(self.col_end_entry, 1, max_col))
+        row_start = int(get_entry(self.row_start_entry, 1, max_row))
+        row_end = int(get_entry(self.row_end_entry, 1, max_row))
 
         if row_start > row_end:
             raise ValueError("Row readout must start before end")
@@ -633,31 +661,53 @@ class MLX75027ROIViewer(BaseROIViewer, tk.Toplevel):
             raise ValueError("Col readout must start before end")
 
         # Now have to convert the output values into registers
-        mlx.set_roi(self.reg_dict, col_start, col_end, row_start, row_end)
+        mlx.set_roi(self.reg_dict, col_start, col_end,
+                    row_start, row_end, self._mlx75027)
         return
 
     def get_mode(self):
         bin_mode = self.bin_var.get()
-        if bin_mode == "VGA":
-            self.reg_dict["BINNING_MODE"][2] = 0
-        elif bin_mode == "QVGA":
-            self.reg_dict["BINNING_MODE"][2] = 1
-        elif bin_mode == "QQVGA":
-            self.reg_dict["BINNING_MODE"][2] = 2
-        elif bin_mode == "QQQVGA":
-            self.reg_dict["BINNING_MODE"][2] = 3
+        if self._mlx75027:
+            if bin_mode == "VGA":
+                self.reg_dict["BINNING_MODE"][2] = 0
+            elif bin_mode == "QVGA":
+                self.reg_dict["BINNING_MODE"][2] = 1
+            elif bin_mode == "QQVGA":
+                self.reg_dict["BINNING_MODE"][2] = 2
+            elif bin_mode == "QQQVGA":
+                self.reg_dict["BINNING_MODE"][2] = 3
+        else:
+            if bin_mode == "QVGA":
+                self.reg_dict["BINNING_MODE"][2] = 0
+            elif bin_mode == "QQVGA":
+                self.reg_dict["BINNING_MODE"][2] = 1
+            elif bin_mode == "QQQVGA":
+                self.reg_dict["BINNING_MODE"][2] = 2
+            elif bin_mode == "QQQQVGA":
+                self.reg_dict["BINNING_MODE"][2] = 3
+
         return
 
     def set_mode(self):
         bin_mode = self.reg_dict["BINNING_MODE"][2]
-        if bin_mode == 0:
-            self.bin_var.set("VGA")
-        elif bin_mode == 1:
-            self.bin_var.set("QVGA")
-        elif bin_mode == 2:
-            self.bin_var.set("QQVGA")
-        elif bin_mode == 3:
-            self.bin_var.set("QQQVGA")
+        if self._mlx75027:
+            if bin_mode == 0:
+                self.bin_var.set("VGA")
+            elif bin_mode == 1:
+                self.bin_var.set("QVGA")
+            elif bin_mode == 2:
+                self.bin_var.set("QQVGA")
+            elif bin_mode == 3:
+                self.bin_var.set("QQQVGA")
+        else:
+            if bin_mode == 0:
+                self.bin_var.set("QVGA")
+            elif bin_mode == 1:
+                self.bin_var.set("QQVGA")
+            elif bin_mode == 2:
+                self.bin_var.set("QQQVGA")
+            elif bin_mode == 3:
+                self.bin_var.set("QQQQVGA")
         return
 
     def set_nxy(self):
@@ -732,7 +782,8 @@ class MLX75027ROIViewer(BaseROIViewer, tk.Toplevel):
             ncols = int(ncols/8)
 
         # Update the start and end values based on our new values
-        mlx.set_roi(self.reg_dict, col_start, col_end, row_start, row_end)
+        mlx.set_roi(self.reg_dict, col_start, col_end,
+                    row_start, row_end, self._mlx75027)
         update_entry(self.col_start_entry, col_start)
         update_entry(self.col_end_entry, col_end)
         update_entry(self.row_start_entry, row_start)
@@ -783,6 +834,7 @@ class MLX75027ROIViewer(BaseROIViewer, tk.Toplevel):
         return
 
 
+"""
 class MLX75027PLLViewer(tk.Toplevel):
     def __init__(self, master, reg_dict):
         self.master = master
@@ -805,11 +857,19 @@ class MLX75027PLLViewer(tk.Toplevel):
         self.reg_dict = copy.deepcopy(reg_dict)
 
         return
+"""
 
 
 class MLX75027_reg_viewer(RegisterViewer):
-    def __init__(self, master, reg_dict):
-        RegisterViewer.__init__(self, master, reg_dict, "mlx75027")
+    def __init__(self, master, reg_dict, mlx75027):
+        self._mlx75027 = mlx75027
+        if mlx75027:
+            sensor_str = "MLX75027"
+        else:
+            sensor_str = "MLX75026"
+        RegisterViewer.__init__(self, master, reg_dict, sensor_str)
+
+        self._mlx75027 = mlx75027
 
         self.buts = []
         self.buts.append(["Export CSV", self.export_csv])
@@ -837,7 +897,7 @@ class MLX75027_reg_viewer(RegisterViewer):
             return
 
         top = tk.Toplevel(self.master)
-        rois = MLX75027ROIViewer(top, self._reg_dict)
+        rois = MLX75027ROIViewer(top, self._reg_dict, self._mlx75027)
         self.master.wait_window(rois.master)
         self._reg_dict = copy.copy(rois.reg_dict)
         self.update_values()
@@ -849,7 +909,7 @@ class MLX75027_reg_viewer(RegisterViewer):
             return
 
         top = tk.Toplevel(self.master)
-        times = MLX75027TimeViewer(top, self._reg_dict)
+        times = MLX75027TimeViewer(top, self._reg_dict, self._mlx75027)
         self.master.wait_window(times.master)
         self._reg_dict = copy.copy(times.reg_dict)
         self.update_values()
@@ -857,8 +917,40 @@ class MLX75027_reg_viewer(RegisterViewer):
 
 
 if __name__ == "__main__":
-    print("MLX75027 Register Map Viewer")
-    infile = os.path.join("..", "mlx75027.csv")
+
+    parser = argparse.ArgumentParser(
+        description="Melexis ToF Image Sensor Configuration Tool")
+    parser.add_argument('--mlx75027', help='Use MLX75027 Registers',
+                        action='store_true')
+    parser.add_argument('--mlx75026', help='Use MLX75026 Registers',
+                        action='store_true')
+
+    parser.set_defaults(mlx75027=False)
+    parser.set_defaults(mlx75026=False)
+    args = parser.parse_args()
+
+    if args.mlx75027 == False and args.mlx75026 == False:
+        print("Defaulting to using MLX75027 sensor")
+        mlx75027 = True
+    elif args.mlx75027 == True and args.mlx75026 == True:
+        print(
+            "Select one image sensor, either MLX75027 or MLX75026, defaulting to MLX75027")
+        mlx75027 = True
+    elif args.mlx75027 == True and args.mlx75026 == False:
+        mlx75027 = True
+    elif args.mlx75027 == False and args.mlx75026 == True:
+        mlx75027 = False
+
+    if mlx75027:
+        sensor_str = "MLX75027"
+    else:
+        sensor_str = "MLX75026"
+    print(sensor_str + " Register Map Viewer")
+
+    if mlx75027:
+        infile = os.path.join("..", "mlx75027.csv")
+    else:
+        infile = os.path.join("..", "mlx75026.csv")
 
     root = tk.Tk()
     if not os.path.isfile(infile):
@@ -868,5 +960,5 @@ if __name__ == "__main__":
             raise RuntimeError("ERROR: Can not find register map file:")
 
     reg_dict = mlx.csv_import(infile)
-    app = MLX75027_reg_viewer(root, reg_dict)
+    app = MLX75027_reg_viewer(root, reg_dict, mlx75027)
     root.mainloop()

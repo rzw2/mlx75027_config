@@ -1,0 +1,136 @@
+Section,RegisterNumber,Bits,Property,Description,ValueMeaning,Value
+6,0x1000,[0],STANDBY,"See Section 6, used as part of startup sequence. ","Change from Sensor Standby to Software Standby by changing register 0x1000 (default value 0x01) to value 0x00 
+Software ",1
+,0x1001,[0],STREAM,"See Section 6, is used to start video streaming from the sensor",Enter Video Streaming by changing register 0x1001 (value 0x00) to value 0x01,0
+7.2,0x1010,[0],Reserved_1010,,,1
+,0x1010,[1],DATA_LANE_CONFIG,Sets the number of MIPI lanes used during readout. ,"0: 2 data lanes, 1: 4 data lanes",1
+,0x100D,[7:0],SPEED0,,,128
+,0x100C,[7:0],SPEED1,,,12
+7.3,0x1C40,[0],CLK_OFF,By default the clock enters a low power state (LPS) between the different data frames (CLK_OFF=1). It is possible to enable to clock continuously (stay in HS mode during frame blanking) via parameter MIPI_CLK_OFF=0 for compatibility with some microcontrollers.,"1: Clock enters low power state between frames, 0: Clock is on at all times. ",1
+,0x2020,[0],MODE,It's mandatory to change the operating mode during Software Standby (Zone #3) as described in section 7.2,,0
+,0x2100,[0],SW_TRIG,When internal triggers are disabled (INT_TRIG = 0) the self-clearing SW_TRIG bit (= software trigger) will be evaluated,,0
+,0x2100,[3],INT_TRIG,In continuous mode the sensor triggers automatically after each frame (with INT_TRIG = 1),,1
+7.4,0x0828,[2:0],OUTPUT_MODE,"Selects the output data from the time-of-flight image sensor. ToF image sensors normally have 2 Taps, TapA and TapB. ","0: Mode A-B 12bit signed, 1: A+B 12bit unsigned, 2: Raw A, 3: Raw B, 4: Raw A & B",0
+7.5,0x0800,[5:0],HMAX_HI,,,2
+,0x0801,[7:0],HMAX_LOW,The HMAX parameter represents the number of internal clock pulses needed for one data row transmission,,182
+7.6,0x0102,[0],PARAM_HOLD,"Each frame consists of multiple configuration parameters, controlled via a slow I2C interface. To avoid frame to frame data corruption when changing more than one parameter (like to modulation frequency or integration time) the user can enable shadow registers that temporarily store the updated values and apply all changes at once when the PARAM_HOLD bit is released.","0: disable shadow registers, 1: enable shadow registers",0
+7.7,0x0824,[7:0],USER_ID,A user programmable register who's will be read out in the first metadata line.,,0
+7.8,0x21BE,[1:0],DIVSELPRE,,"0: [100-75],[50-38],[20-91]MHz, 1: [74-51],[37-21],[18-10]MHz, 2: [9-5]MHz, 3: [4]MHz",0
+,0x21BF,[1:0],DIVSEL,,"0: [100-51]MHz, 1: [50-21]MHz, 2: [20-4]MHz",0
+,0x1048,[2:0],FMOD_HI,"FMOD value is calculated as 2^(DIVSELPRE+DIVSEL) * Modulation Frequency 
+ ",,0
+,0x1049,[7:0],FMOD_LOW,,,80
+,0x104B,[7:0],FVCO_FMOD,,"0: 900 <= FMOD*8 <= 1200, 2: 500 <= FMOD*8 <= 900",2
+7.9,0x21D4,[7:0],FRAME_STARTUP_HI,The frame start up time is the time between a TRIGGER pulse and the start of the first phase acquisition. ,,0
+,0x21D5,[7:0],FRAME_STARTUP_LOW,,,0
+7.1,0x2108,[7:0],FRAME_TIME3,The minimum length of a frame is dominated by the individual phase configurations. Programming a FRAME_TIME longer than the minimum time needed to capture all phases adds an additional wait time. ,Frame_time_us*120/HMAX,0
+,0x2109,[7:0],FRAME_TIME2,,,0
+,0x210A,[7:0],FRAME_TIME1,,,0
+,0x210B,[7:0],FRAME_TIME0,,,0
+7.11,0x21E8,[3:0],PHASE_COUNT,It is possible to define up to eight raw phases in a single frame for more complex acquisition schemes.,"1: Phase 1 enabled, 2: Phase 1-2 enabled, ... 8: Phase 1-8 enabled",4
+7.12,0x21C0,[7:0],Px_PREHEAT,,,0
+,0x21C2,[7:0],Px_PREMIX,,,0
+,0x4015,[4:0],Px_PRETIME_HI,This is also PIXRST,,0
+,0x4016,[7:0],Px_PRETIME_LOW,This is also PIXRST,,10
+7.13,0x2120,[7:0],P0_INT3,Sets the integration time of raw frame 0,FLOOR(integration_time_us*120)/HMAX) * HMAX,0
+,0x2121,[7:0],P0_INT2,,,1
+,0x2122,[7:0],P0_INT1,,,212
+,0x2123,[7:0],P0_INT0,,,192
+,0x2124,[7:0],P1_INT3,Sets the integration time of raw frame 1,FLOOR(integration_time_us*120)/HMAX) * HMAX,0
+,0x2125,[7:0],P1_INT2,,,1
+,0x2126,[7:0],P1_INT1,,,212
+,0x2127,[7:0],P1_INT0,,,192
+,0x2128,[7:0],P2_INT3,Sets the integration time of raw frame 2,FLOOR(integration_time_us*120)/HMAX) * HMAX,0
+,0x2129,[7:0],P2_INT2,,,1
+,0x212A,[7:0],P2_INT1,,,212
+,0x212B,[7:0],P2_INT0,,,192
+,0x212C,[7:0],P3_INT3,Sets the integration time of raw frame 3,FLOOR(integration_time_us*120)/HMAX) * HMAX,0
+,0x212D,[7:0],P3_INT2,,,1
+,0x212E,[7:0],P3_INT1,,,212
+,0x212F,[7:0],P3_INT0,,,192
+,0x2130,[7:0],P4_INT3,Sets the integration time of raw frame 4,FLOOR(integration_time_us*120)/HMAX) * HMAX,0
+,0x2131,[7:0],P4_INT2,,,1
+,0x2132,[7:0],P4_INT1,,,212
+,0x2133,[7:0],P4_INT0,,,192
+,0x2134,[7:0],P5_INT3,Sets the integration time of raw frame 5,FLOOR(integration_time_us*120)/HMAX) * HMAX,0
+,0x2135,[7:0],P5_INT2,,,1
+,0x2136,[7:0],P5_INT1,,,212
+,0x2137,[7:0],P5_INT0,,,192
+,0x2138,[7:0],P6_INT3,Sets the integration time of raw frame 6,FLOOR(integration_time_us*120)/HMAX) * HMAX,0
+,0x2139,[7:0],P6_INT2,,,1
+,0x213A,[7:0],P6_INT1,,,212
+,0x213B,[7:0],P6_INT0,,,192
+,0x213C,[7:0],P7_INT3,Sets the integration time of raw frame 7,FLOOR(integration_time_us*120)/HMAX) * HMAX,0
+,0x213D,[7:0],P7_INT2,,,1
+,0x213E,[7:0],P7_INT1,,,212
+,0x213F,[7:0],P7_INT0,,,192
+7.15,0x21B4,[2:0],P0_PHASE_SHIFT,Phase shift of raw frame 0,"0 : 0 degrees, 1: 45 degrees, 2: 90 degrees, 3: 135 degrees, 4: 180 degrees, 5: 225 degrees, 6: 270 degrees, 7: 315 degrees",0
+,0x21B4,[6:4],P1_PHASE_SHIFT,Phase shift of raw frame 1,"0 : 0 degrees, 1: 45 degrees, 2: 90 degrees, 3: 135 degrees, 4: 180 degrees, 5: 225 degrees, 6: 270 degrees, 7: 315 degrees",4
+,0x21B5,[2:0],P2_PHASE_SHIFT,Phase shift of raw frame 2,"0 : 0 degrees, 1: 45 degrees, 2: 90 degrees, 3: 135 degrees, 4: 180 degrees, 5: 225 degrees, 6: 270 degrees, 7: 315 degrees",2
+,0x21B5,[6:4],P3_PHASE_SHIFT,Phase shift of raw frame 3,"0 : 0 degrees, 1: 45 degrees, 2: 90 degrees, 3: 135 degrees, 4: 180 degrees, 5: 225 degrees, 6: 270 degrees, 7: 315 degrees",6
+,0x21B6,[2:0],P4_PHASE_SHIFT,Phase shift of raw frame 4,"0 : 0 degrees, 1: 45 degrees, 2: 90 degrees, 3: 135 degrees, 4: 180 degrees, 5: 225 degrees, 6: 270 degrees, 7: 315 degrees",0
+,0x21B6,[6:4],P5_PHASE_SHIFT,Phase shift of raw frame 5,"0 : 0 degrees, 1: 45 degrees, 2: 90 degrees, 3: 135 degrees, 4: 180 degrees, 5: 225 degrees, 6: 270 degrees, 7: 315 degrees",0
+,0x21B7,[2:0],P6_PHASE_SHIFT,Phase shift of raw frame 6,"0 : 0 degrees, 1: 45 degrees, 2: 90 degrees, 3: 135 degrees, 4: 180 degrees, 5: 225 degrees, 6: 270 degrees, 7: 315 degrees",0
+,0x21B7,[6:4],P7_PHASE_SHIFT,Phase shift of raw frame 7,"0 : 0 degrees, 1: 45 degrees, 2: 90 degrees, 3: 135 degrees, 4: 180 degrees, 5: 225 degrees, 6: 270 degrees, 7: 315 degrees",0
+,0x4EA0,[0],MODREF,"Selects if the sensor modulation signal is phase shifted, or if the illumination signal is shifted. ","0: Illum phase shifted, 1: Sensor phase shifted",0
+7.16,0x21C8,[7:0],P0_PHASE_IDLE,An artificial idle time (wait time or V-blanking) between 2 subsequent phases can be configured. This is raw frame 0 idle time,Phase_idle_us*120/HMAX,5
+,0x21C9,[7:0],P1_PHASE_IDLE,Raw frame 1 idle time,Phase_idle_us*120/HMAX,5
+,0x21CA,[7:0],P2_PHASE_IDLE,Raw frame 2 idle time,Phase_idle_us*120/HMAX,5
+,0x21CB,[7:0],P3_PHASE_IDLE,Raw frame 3 idle time,Phase_idle_us*120/HMAX,5
+,0x21CC,[7:0],P4_PHASE_IDLE,Raw frame 4 idle time,Phase_idle_us*120/HMAX,5
+,0x21CD,[7:0],P5_PHASE_IDLE,Raw frame 5 idle time,Phase_idle_us*120/HMAX,5
+,0x21CE,[7:0],P6_PHASE_IDLE,Raw frame 6 idle time,Phase_idle_us*120/HMAX,5
+,0x21CF,[7:0],P7_PHASE_IDLE,Raw frame 7 idle time,Phase_idle_us*120/HMAX,5
+7.17,0x21C4,[7:0],Px_LEDEN,Enable or disable the LEDEN pulse(s) for each raw frame. ,See setion 7.16,0
+7.18,0x21A8,[1:0],P1_DMIX0,Modulation mode of tap A of raw frame 0,"0: Modulating, 1: static low, 2: static high",0
+,0x21A8,[3:2],P2_DMIX0,Modulation mode of tap A of raw frame 1,"0: Modulating, 1: static low, 2: static high",0
+,0x21A8,[5:4],P3_DMIX0,Modulation mode of tap A of raw frame 2,"0: Modulating, 1: static low, 2: static high",0
+,0x21A8,[7:6],P4_DMIX0,Modulation mode of tap A of raw frame 3,"0: Modulating, 1: static low, 2: static high",0
+,0x21A9,[1:0],P5_DMIX0,Modulation mode of tap A of raw frame 4,"0: Modulating, 1: static low, 2: static high",0
+,0x21A9,[3:2],P6_DMIX0,Modulation mode of tap A of raw frame 5,"0: Modulating, 1: static low, 2: static high",0
+,0x21A9,[5:4],P7_DMIX0,Modulation mode of tap A of raw frame 6,"0: Modulating, 1: static low, 2: static high",0
+,0x21A9,[7:6],P8_DMIX0,Modulation mode of tap A of raw frame 7,"0: Modulating, 1: static low, 2: static high",0
+,0x21AC,[1:0],P1_DMIX1,Modulation mode of tap B of raw frame 0,"0: Modulating, 1: static low, 2: static high",0
+,0x21AC,[3:2],P2_DMIX1,Modulation mode of tap B of raw frame 1,"0: Modulating, 1: static low, 2: static high",0
+,0x21AC,[5:4],P3_DMIX1,Modulation mode of tap B of raw frame 2,"0: Modulating, 1: static low, 2: static high",0
+,0x21AC,[7:6],P4_DMIX1,Modulation mode of tap B of raw frame 3,"0: Modulating, 1: static low, 2: static high",0
+,0x21AD,[1:0],P5_DMIX1,Modulation mode of tap B of raw frame 4,"0: Modulating, 1: static low, 2: static high",0
+,0x21AD,[3:2],P6_DMIX1,Modulation mode of tap B of raw frame 5,"0: Modulating, 1: static low, 2: static high",0
+,0x21AD,[5:4],P7_DMIX1,Modulation mode of tap B of raw frame 6,"0: Modulating, 1: static low, 2: static high",0
+,0x21AD,[7:6],P8_DMIX1,Modulation mode of tap B of raw frame 7,"0: Modulating, 1: static low, 2: static high",0
+,0x21B0,[1:0],P1_STATIC_LED,Modulation mode of the illumination output of raw frame 0,"0: Modulating, 1: static low, 2: static high",0
+,0x21B0,[3:2],P2_STATIC_LED,Modulation mode of the illumination output of raw frame 1,"0: Modulating, 1: static low, 2: static high",0
+,0x21B0,[5:4],P3_STATIC_LED,Modulation mode of the illumination output of raw frame 2,"0: Modulating, 1: static low, 2: static high",0
+,0x21B0,[7:6],P4_STATIC_LED,Modulation mode of the illumination output of raw frame 3,"0: Modulating, 1: static low, 2: static high",0
+,0x21B1,[1:0],P5_STATIC_LED,Modulation mode of the illumination output of raw frame 4,"0: Modulating, 1: static low, 2: static high",0
+,0x21B1,[3:2],P6_STATIC_LED,Modulation mode of the illumination output of raw frame 5,"0: Modulating, 1: static low, 2: static high",0
+,0x21B1,[5:4],P7_STATIC_LED,Modulation mode of the illumination output of raw frame 6,"0: Modulating, 1: static low, 2: static high",0
+,0x21B1,[7:6],P8_STATIC_LED,Modulation mode of the illumination output of raw frame 7,"0: Modulating, 1: static low, 2: static high",0
+7.19,0x14A5,[1:0],BINNING_MODE,,"0: qvga (320x240), 1: qqvga (160x120), 2: qqqvga (80x60), 3: qqqqvga (40x30)",0
+7.2,0x0804,[5:0],ROI_COL_START_HI,,x1,0
+,0x0805,[7:0],ROI_COL_START_LOW,,,1
+,0x0806,[1:0],ROI_COL_WIDTH_HI,,x2 - x1 + 1,1
+,0x0807,[7:0],ROI_COL_WIDTH_LOW,,,64
+,0x0808,[0],ROI_ROW_START_HI,,(y1-1)/2,0
+,0x0809,[7:0],ROI_ROW_START_LOW,,,0
+,0x080A,[0],ROI_ROW_END_HI,,y2/2 + 1,0
+,0x080B,[7:0],ROI_ROW_END_LOW,,,121
+7.21,0x080C,[0],IMG_ORIENTATION_V,Flip the output image.  Changing registers IMG_ORIENTATION_H or IMG_ORIENTATION_V (from section 7.20) also requires the user to reverse the applicable ROI registers for the same region to be readout,"0: Default, 1: Flip",0
+,0x080D,[0],IMG_ORIENTATION_H,Mirror the output image.  Changing registers IMG_ORIENTATION_H or IMG_ORIENTATION_V (from section 7.20) also requires the user to reverse the applicable ROI registers for the same region to be readout,"0: Default, 1: Mirror",0
+7.22,0x1403,[7:0],TEMP_VALUE,The internal junction temperature,Temperature [in °C] = TEMP_VALUE - 40,0
+7.23,0x1433,[0],STATS_EN,,"0: Statistics disabled, no eror flags in pixel data, 1: Statistics enabled, error flag or error code in pixel data",0
+,0x14BB,[0],STATS_MODE,,"0: Bit [11] of pixel data is the error flag, 1: 0x800 is the error code (A-B) mode. ",0
+7.25,0x4E9E,[2:0],DUTY_CYCLE,,"0: No Adjustment, 1: increase, 2: decrease",0
+,0x21B9,[3:0],DUTY_CYCLE_VALUE,The total delay (of the rising and falling edge) = DUTY_CYCLE_VALUE *  500 ps (typical value),,0
+,0x10E2,[0],LVDS_EN,The illumination signal is available as differential signal (subLVDS) or as single ended pulses (CMOS). ,"0: CMOS, 1: LVDS",0
+,0x3C18,[1:0],EN_META,MetaData or embedded data is available on two lines after the normal pixel data. ,"0: No Metadata, 1: line #1 enabled, 2: both lines enabled ",2
+,0x4010,[7:0],PLLSSETUP,PLLSETUP is the time required for the Timing Generator block (see section 2) to settle before each frame and it can be calculated as FLOOR( 503 * 120 / HMAX + 8) ,,95
+,0x5265,[5:0],RANDNM0_2,,,0
+,0x5266,[7:0],RANDNM0_1,,,32
+,0x5267,[7:0],RANDNM0_0,,,44
+,0x5281,[5:0],RANDNM7_2,,,0
+,0x5282,[7:0],RANDNM7_1,,,5
+,0x5283,[7:0],RANDNM7_0,,,85
+7.18.3,0x201E,[7:0],ADELAY_SFINE,The super fine step size is 20ps. ,The maximum value is 3. ,0
+7.18.2,0x201D,[7:0],ADELAY_FINE,The fine delay size is around 75ps. ,The maximum value is 71,0
+7.18.1,0x201C,[7:0],ADELAY_COARSE,The coarse delay setting of the illumination output,The maximum value depends on the modulation frequency.,0
