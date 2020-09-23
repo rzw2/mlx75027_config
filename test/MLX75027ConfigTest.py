@@ -26,7 +26,11 @@ class EPC660ConfigTest(unittest.TestCase):
 
         mlx.csv_export(export_file, reg_dict)
         self.assertTrue(os.path.isfile(export_file))
-        self.assertTrue(filecmp.cmp(export_file, import_file, shallow=False))
+        reg_export = mlx.csv_import(export_file)
+
+        for n in reg_dict.keys():
+            self.assertEqual(reg_dict[n][2], reg_export[n][2])
+
         os.remove(export_file)
         return
 
@@ -278,7 +282,10 @@ class MLX75027ConfigTest(unittest.TestCase):
 
         mlx.csv_export(export_file, reg_dict)
         self.assertTrue(os.path.isfile(export_file))
-        self.assertTrue(filecmp.cmp(export_file, import_file, shallow=False))
+        reg_export = mlx.csv_import(export_file)
+
+        for n in reg_dict.keys():
+            self.assertEqual(reg_dict[n][2], reg_export[n][2])
         os.remove(export_file)
 
     def test_import_export(self):
@@ -529,6 +536,28 @@ class MLX75027ConfigTest(unittest.TestCase):
         np.testing.assert_equal(premix, premix_expected)
 
         return
+
+    def test_2lanes_AB_mode(self):
+        """ Make sure v0.9 of the datasheet has fixed the Mipi lane configurations """
+        import_file = os.path.join("..", "mlx75027.csv")
+        self.assertTrue(os.path.isfile(import_file))
+
+        reg_dict = mlx.csv_import(import_file)
+
+        nlanes = 2
+        mode = 4
+        mipi_speed = 300
+
+        mlx.set_nlanes(reg_dict, nlanes)
+        mlx.set_output_mode(reg_dict, mode)
+        hmax = mlx.calc_hmax(reg_dict, True, speed=mipi_speed)
+        mlx.set_hmax(reg_dict, hmax)
+        # Now export the register values.
+        mlx.check_reg_dict(reg_dict)
+
+        reg_dict["OUTPUT_MODE"][2] = 8
+        with self.assertRaises(ValueError):
+            mlx.check_reg_dict(reg_dict)
 
     def test_default_values(self):
         """

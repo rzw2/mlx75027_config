@@ -73,7 +73,7 @@ Section,RegisterNumber,Bits,Property,Description,ValueMeaning,Value
 ,0x0090,[7:6],Reserved_90_2,,,3
 ,0x0091,[1:0],Reserved_91_0,,,3
 ,0x0091,[5:3],Reserved_91_1,,,0
-,0x0091,[6],hsync_rollover,Avoids readout rollover when using slower DCLKs e.g. DCLK < 31.2MHz. Stretches HSYNC for slower TCMI interface. Causes reduced DCS frame rate due to additional 2μs per ADC conversion (t conv + 2μs).,"0: disable for DCLK > 31.2MHz (default), 1: enable otherwise. Refer to Figure 27 and note above.",0
+,0x0091,[6],hsync_rollover,Avoids readout rollover when using slower DCLKs e.g. DCLK less than 31.2MHz. Stretches HSYNC for slower TCMI interface. Causes reduced DCS frame rate due to additional 2us per ADC conversion (t conv + 2us).,"0: disable for DCLK > 31.2MHz (default), 1: enable otherwise. Refer to Figure 27 and note above.",0
 ,0x0092,[1:0],Reserved_92_0,,,0
 ,0x0092,[2],Reserved_92_1,,,1
 ,0x0092,[3],dual_int_mode,"Dual integration time mode a acquisition with 2 integration times per DCS frame using additionally integration length 2, registers 0x9E and 0x9F","0: Disable, 1: Enable",0
@@ -94,7 +94,7 @@ Section,RegisterNumber,Bits,Property,Description,ValueMeaning,Value
 ,0x009F,[7:0],int_len2_low,,,255
 ,0x00A0,[7:0],int_mult_hi,"Integration time multiplier (10 bit value) for integration lengths set with the integration length registers (default = 1, min. value = 1). This multiplier is active on both settings integration length 1 and 2. ",,0
 ,0x00A1,[7:0],int_mult_low,,,1
-,0x00A2,[7:0],int_len_hi,"Integration length 1: Number of modulation clock periods for the (first in dual integration time mode ) integration time (16 bit value, default = 2'047, min. value = 7 which is integration time 167ns @ 12MHz). Integration time = Integration time multiplier * (Integration length +1) * t mod_clk e.g. for defaults @ 12MHz modulation clock = 42.6μs Note: (Integration length + 1) should be evenly divisible by 4. ",,7
+,0x00A2,[7:0],int_len_hi,"Integration length 1: Number of modulation clock periods for the (first in dual integration time mode ) integration time (16 bit value, default = 2'047, min. value = 7 which is integration time 167ns @ 12MHz). Integration time = Integration time multiplier * (Integration length +1) * t mod_clk e.g. for defaults @ 12MHz modulation clock = 42.6us Note: (Integration length + 1) should be evenly divisible by 4. ",,7
 ,0x00A3,[7:0],int_len_low,,,255
 ,0x00A4,[0],shutter_release,Shutter release (single shot SW control),"0: disable 1: enable (auto cleared), starts acquisition Note: Shutter release is not auto-cleared when multiple frames is enable. ",0
 ,0x00A4,[1],video_mode,Multiple frames (video mode). Refer to chapter 6.2.2.,"0: Disable, 1: Enable",0
@@ -119,8 +119,8 @@ Section,RegisterNumber,Bits,Property,Description,ValueMeaning,Value
 ,0x00CC,[5],reserved_CC_0,,,0
 ,0x00CC,[6],xsync_mode,Select XSYNC / SAT output pin function,0: XSYNC 1: SAT,1
 ,0x00CC,[7],force_sat,"Force DATA[11:0] = 0xFFF (unsigned) / 0x7FF (signed, two's complement) during data-out operation when corresponding pixel is saturated",0: disabled 1: enabled,0
-,0x00E8,[7:0],temp_cor_tl,Temperature offset correction for sensor top left. Value for calculation according the formula in chapter 10 by the application SW. Range approx. -27 ... +27oC with around 0.2oC steps. The reference temperature is +27C. 0x7F (127) corresponds to 0oC offset. 0xFF: Function is not supported.,,0
-,0x00E9,[7:0],dll_step,"DLL step. Supported for Wafer IDs 212 or higher. Refer for details to register 0x73 and Figure 20. The exact value is t DLL = ((register 0xE9 -128) * 0.003ns) + 2.1ns (at +27oC, V DD ,V DDPLL = 1.8V). 0xFF: Function is not supported.",,0
-,0x00EA,[7:0],temp_cor_tr,Temperature offset correction for sensor top left. Value for calculation according the formula in chapter 10 by the application SW. Range approx. -27 ... +27oC with around 0.2oC steps. The reference temperature is +27C. 0x7F (127) corresponds to 0oC offset. 0xFF: Function is not supported.,,0
-,0x00EC,[7:0],temp_cor_bl,Temperature offset correction for sensor top left. Value for calculation according the formula in chapter 10 by the application SW. Range approx. -27 ... +27oC with around 0.2oC steps. The reference temperature is +27C. 0x7F (127) corresponds to 0oC offset. 0xFF: Function is not supported.,,0
-,0x00EE,[7:0],temp_cor_br,Temperature offset correction for sensor top left. Value for calculation according the formula in chapter 10 by the application SW. Range approx. -27 ... +27oC with around 0.2oC steps. The reference temperature is +27C. 0x7F (127) corresponds to 0oC offset. 0xFF: Function is not supported.,,0
+,0x00E8,[7:0],temp_cor_tl,Temperature offset correction for sensor top left. Value for calculation according the formula in chapter 10 by the application SW. Range approx. -27 ... +27C with around 0.2C steps. The reference temperature is +27C. 0x7F (127) corresponds to 0oC offset. 0xFF: Function is not supported.,,0
+,0x00E9,[7:0],dll_step,"DLL step. Supported for Wafer IDs 212 or higher. Refer for details to register 0x73 and Figure 20. The exact value is t DLL = ((register 0xE9 -128) * 0.003ns) + 2.1ns (at +27C, V DD ,V DDPLL = 1.8V). 0xFF: Function is not supported.",,0
+,0x00EA,[7:0],temp_cor_tr,Temperature offset correction for sensor top left. Value for calculation according the formula in chapter 10 by the application SW. Range approx. -27 ... +27C with around 0.2C steps. The reference temperature is +27C. 0x7F (127) corresponds to 0oC offset. 0xFF: Function is not supported.,,0
+,0x00EC,[7:0],temp_cor_bl,Temperature offset correction for sensor top left. Value for calculation according the formula in chapter 10 by the application SW. Range approx. -27 ... +27C with around 0.2C steps. The reference temperature is +27C. 0x7F (127) corresponds to 0oC offset. 0xFF: Function is not supported.,,0
+,0x00EE,[7:0],temp_cor_br,Temperature offset correction for sensor top left. Value for calculation according the formula in chapter 10 by the application SW. Range approx. -27 ... +27C with around 0.2C steps. The reference temperature is +27C. 0x7F (127) corresponds to 0oC offset. 0xFF: Function is not supported.,,0

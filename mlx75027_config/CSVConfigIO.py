@@ -13,7 +13,19 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 """
 
 import csv
-import os 
+import os
+
+
+def check_reg_dict(reg_dict):
+    """ Check the register dictionary to make sure all the values are valid """
+    for k in reg_dict:
+        val = reg_dict[k][2]
+        if(val >= (2**reg_dict[k][1])):
+            raise ValueError("Size")
+        if val < 0:
+            raise ValueError("Negative register value")
+    return
+
 
 def calc_bits(offset, size):
     """
@@ -53,6 +65,7 @@ def dict_to_registers(reg_dict):
     """
     # We convert a dictionary to the register values
     reg = {}
+    check_reg_dict(reg_dict)
     for k in reg_dict:
         if not reg_dict[k][4] in reg:
             reg[reg_dict[k][4]] = 0
@@ -72,6 +85,7 @@ def registers_to_dict(reg_dict, reg):
     """
 
     # We convert a registers to and update an existing dictionary
+    check_reg_dict(reg_dict)
     for k in reg_dict:
         mask = (2**(reg_dict[k][1]))-1
         try:
@@ -113,7 +127,8 @@ def csv_export(outFile, reg_dict):
     reg_dict : dict, the dictionary that contains all the information from the CSV file
 
     """
-    with open(outFile, 'w', newline='') as csvfile:
+    check_reg_dict(reg_dict)
+    with open(outFile, 'w', newline='', encoding='utf-8') as csvfile:
         # Write the headers.
         fieldnames = ["Section", "RegisterNumber", "Bits",
                       "Property", "Description", "ValueMeaning", "Value"]
@@ -153,10 +168,10 @@ def csv_import(infile):
     translation_table = dict.fromkeys(map(ord, '[]'), None)
 
     if os.path.isfile(infile) == False:
-        raise RuntimeError("Input file not found!") 
+        raise RuntimeError("Input file not found!")
 
-    with open(infile) as csvfile:
-        spamreader = csv.reader(csvfile,delimiter=',')
+    with open(infile, encoding='utf-8') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',')
         # Read the header
         for row in spamreader:
             # print(str(row))
@@ -185,5 +200,8 @@ def csv_import(infile):
                 value_meaning = row[5]
                 reg_dict[row[3]] = [offset, size, value,
                                     desc, reg_num, value_meaning, section]
+
+    # A sanity check
+    check_reg_dict(reg_dict)
 
     return reg_dict

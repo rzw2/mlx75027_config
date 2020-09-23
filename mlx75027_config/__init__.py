@@ -8,7 +8,7 @@ The library contains the following functions
 
 """
 
-from mlx75027_config.CSVConfigIO import csv_export_registers, csv_export, csv_import, dict_to_registers, calc_bits
+from mlx75027_config.CSVConfigIO import csv_export_registers, csv_export, csv_import, dict_to_registers, calc_bits, check_reg_dict
 from mlx75027_config.SensorConfig import value16_to_reg, value24_to_reg, value32_to_reg, reg24_to_value, reg16_to_value, reg_to_value
 
 from mlx75027_config.MLX75027Config import calc_startup_time, set_startup_time, set_deadtime, calc_deadtime, calc_int_times, set_int_times
