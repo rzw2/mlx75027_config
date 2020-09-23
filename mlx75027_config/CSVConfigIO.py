@@ -155,7 +155,7 @@ def csv_import(infile):
     if os.path.isfile(infile) == False:
         raise RuntimeError("Input file not found!") 
 
-    with open(infile,encoding="utf8") as csvfile:
+    with open(infile) as csvfile:
         spamreader = csv.reader(csvfile,delimiter=',')
         # Read the header
         for row in spamreader:

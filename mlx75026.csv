@@ -117,7 +117,7 @@ Software ",1
 ,0x080B,[7:0],ROI_ROW_END_LOW,,,121
 7.21,0x080C,[0],IMG_ORIENTATION_V,Flip the output image.  Changing registers IMG_ORIENTATION_H or IMG_ORIENTATION_V (from section 7.20) also requires the user to reverse the applicable ROI registers for the same region to be readout,"0: Default, 1: Flip",0
 ,0x080D,[0],IMG_ORIENTATION_H,Mirror the output image.  Changing registers IMG_ORIENTATION_H or IMG_ORIENTATION_V (from section 7.20) also requires the user to reverse the applicable ROI registers for the same region to be readout,"0: Default, 1: Mirror",0
-7.22,0x1403,[7:0],TEMP_VALUE,The internal junction temperature,Temperature [in °C] = TEMP_VALUE - 40,0
+7.22,0x1403,[7:0],TEMP_VALUE,The internal junction temperature,Temperature [in C] = TEMP_VALUE - 40,0
 7.23,0x1433,[0],STATS_EN,,"0: Statistics disabled, no eror flags in pixel data, 1: Statistics enabled, error flag or error code in pixel data",0
 ,0x14BB,[0],STATS_MODE,,"0: Bit [11] of pixel data is the error flag, 1: 0x800 is the error code (A-B) mode. ",0
 7.25,0x4E9E,[2:0],DUTY_CYCLE,,"0: No Adjustment, 1: increase, 2: decrease",0
