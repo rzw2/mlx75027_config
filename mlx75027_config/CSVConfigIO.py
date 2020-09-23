@@ -13,7 +13,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 """
 
 import csv
-
+import os 
 
 def calc_bits(offset, size):
     """
@@ -140,17 +140,23 @@ def csv_import(infile):
 
     Parameters
     ----------
-    infile : str, the CSV file to read from 
+    infile : str 
+        The CSV file to read from 
 
     Returns
     ----------
-    reg_dict : dict, the dictionary of everything 
+    reg_dict : dict 
+        The dictionary of everything 
     """
 
     reg_dict = {}
     translation_table = dict.fromkeys(map(ord, '[]'), None)
-    with open(infile) as csvfile:
-        spamreader = csv.reader(csvfile)
+
+    if os.path.isfile(infile) == False:
+        raise RuntimeError("Input file not found!") 
+
+    with open(infile,encoding="utf8") as csvfile:
+        spamreader = csv.reader(csvfile,delimiter=',')
         # Read the header
         for row in spamreader:
             # print(str(row))

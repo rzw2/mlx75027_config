@@ -336,15 +336,17 @@ def calc_speed(reg_dict, mlx75027):
     ----------
     reg_dict : dict 
         The dictionary that contains all the register information 
-    mlx75027 : bool, optional
+    mlx75027 : bool
         Set to True if using the MLX75027 sensor, False
-        if using the MLX75025 sensor. 
+        if using the MLX75026 sensor. 
+    
     Returns
     ----------
     mipi_speed : int 
         The speed of the MIPI bus in megabits per second
     """
     hmax = reg16_to_value(reg_dict, "HMAX_LOW", "HMAX_HI")
+    #print("mlx75027: " + str(mlx75027))
     if mlx75027:
         hmax300 = [0x0E60, 0x0860, 0x1CC0, 0x0E60]
         hmax600 = [0x0744, 0x0444, 0x0E88, 0x0744]
@@ -356,7 +358,7 @@ def calc_speed(reg_dict, mlx75027):
         hmax600 = [0x0450, 0x02C4, 0x0754, 0x0444]
         hmax704 = [0x03B2, 0x02B6, 0x0644, 0x03A8]
         hmax800 = [0x0344, 0x02B6, 0x0586, 0x033A]
-        hmax900 = [0x02BE, 0x02B6, 0x0514, 0x02B6]
+        hmax960 = [0x02BE, 0x02B6, 0x0514, 0x02B6]
 
     if hmax in hmax300:
         return 300
@@ -408,8 +410,8 @@ def calc_hmax(reg_dict, mlx75027, speed=800):
     ----------
     reg_dict : dict 
         The dictionary that contains all the register information 
-    mlx75027 : bool, optional
-        Set to True if using the MLX75027 sensor, False if using the MLX75025 sensor.
+    mlx75027 : bool
+        Set to True if using the MLX75027 sensor, False if using the MLX75026 sensor.
     speed : int, optional 
         The speed of the MIPI readout in Mbps 
 
@@ -489,7 +491,7 @@ def set_int_times(reg_dict, int_times, mlx75027):
     ----------
     reg_dict : dict 
         The dictionary that contains all the register information 
-    int_times : np.array 
+    int_times : numpy.array 
         The array of integration times in micro-seconds (us)
     mlx75027 : bool
         Set to True if MLX75027, False for MLX75026
@@ -498,6 +500,7 @@ def set_int_times(reg_dict, int_times, mlx75027):
     if np.size(int_times) > 8:
         raise RuntimeError("MLX75027 has maximum number of 8 raw frames!")
 
+    #print("set_int_times")
     speed = calc_speed(reg_dict, mlx75027)
     hmax = calc_hmax(reg_dict, mlx75027, speed=speed)
 
@@ -524,6 +527,8 @@ def calc_startup_time(reg_dict, mlx75027):
     startup_time : float 
         The startup time in micro-seconds (us)
     """
+
+    #print("calc_startup_time")
     speed = calc_speed(reg_dict, mlx75027)
     hmax = calc_hmax(reg_dict, mlx75027, speed=speed)
     value = reg_dict["FRAME_STARTUP_HI"][2] * \
@@ -546,6 +551,8 @@ def set_startup_time(reg_dict, startup_time_us, mlx75027):
     mlx75027 : bool
         Set to True if MLX75027, False for MLX75026 
     """
+
+    #print("set_startup_time")
     speed = calc_speed(reg_dict, mlx75027)
     hmax = calc_hmax(reg_dict, mlx75027, speed=speed)
     frame_startup = int((startup_time_us*120) / hmax)
@@ -572,6 +579,7 @@ def calc_idle_time(reg_dict, mlx75027):
 
     """
     idle_time = np.zeros(8)
+    #print("calc_idle_time")
     speed = calc_speed(reg_dict, mlx75027)
     hmax = calc_hmax(reg_dict, mlx75027, speed=speed)
 
@@ -597,6 +605,7 @@ def set_idle_time(reg_dict, idle_times, mlx75027):
     if np.size(idle_times) > 8:
         raise RuntimeError("MLX75027 only 8 raw frame possible!")
 
+    #print("set_idle_time")
     speed = calc_speed(reg_dict, mlx75027)
     hmax = calc_hmax(reg_dict, mlx75027, speed=speed)
 
@@ -614,9 +623,9 @@ def calc_pretime(reg_dict, mlx75027):
     ----------
     reg_dict : dict 
         The dictionary that contains all the register information 
-    mlx75027 : bool, optional
+    mlx75027 : bool
         Set to True if using the MLX75027 sensor, False
-        if using the MLX75025 sensor. 
+        if using the MLX75026 sensor. 
 
     Returns
     ----------
@@ -624,6 +633,8 @@ def calc_pretime(reg_dict, mlx75027):
         The pretime in micro-seconds (us)
 
     """
+
+    #print("calc_pretime")
     speed = calc_speed(reg_dict, mlx75027)
     hmax = calc_hmax(reg_dict, mlx75027, speed=speed)
 
@@ -667,6 +678,7 @@ def set_pretime(reg_dict, pretime, mlx75027):
     pretime_enabled = np.any(
         reg_dict["Px_PREHEAT"][2] | reg_dict["Px_PREMIX"][2])
 
+    #print("set_pretime")
     speed = calc_speed(reg_dict, mlx75027)
     hmax = calc_hmax(reg_dict, mlx75027, speed=speed)
 
@@ -688,6 +700,10 @@ def set_pretime(reg_dict, pretime, mlx75027):
         randnm7 = 1070
 
     randnm0 = hmax*pretime_reg - randnm7 - 2098
+    if randnm0 > (22**2)-1: 
+        raise RuntimeError("Invalid RANDNM0 Value!")
+    if randnm0 < 0: 
+        raise RuntimeError("Negative RANDNM0 Value!")
 
     value16_to_reg(reg_dict, pretime_reg,
                    "Px_PRETIME_HI", "Px_PRETIME_LOW")
@@ -807,6 +823,8 @@ def calc_phase_time(reg_dict, mlx75027):
     phase_times : numpy.array 
         The time in micro-seconds (us) 
     """
+
+    #print("calc_phase_time")
     speed = calc_speed(reg_dict, mlx75027)
     hmax = calc_hmax(reg_dict, mlx75027, speed=speed)
 
@@ -836,13 +854,14 @@ def calc_deadtime(reg_dict, mlx75027):
         The dead time in micro-seconds (us) 
     """
 
+    #print("calc_deadtime")
     speed = calc_speed(reg_dict, mlx75027)
     hmax = calc_hmax(reg_dict, mlx75027, speed=speed)
     frame_time_reg = reg_to_value(
         reg_dict, "FRAME_TIME0", "FRAME_TIME1", "FRAME_TIME2", "FRAME_TIME3")
     frame_time_us = (frame_time_reg*hmax) / 120.0
 
-    min_frame_time = calc_frame_time(reg_dict, False)
+    min_frame_time = calc_frame_time(reg_dict, mlx75027, False)
 
     if min_frame_time > frame_time_us:
         dead_time = 0
@@ -867,9 +886,11 @@ def set_deadtime(reg_dict, dead_time, mlx75027):
         Set to True if MLX75027, False for MLX75026
 
     """
+
+    #print("set_deadtime")
     speed = calc_speed(reg_dict, mlx75027)
     hmax = calc_hmax(reg_dict, mlx75027, speed=speed)
-    min_frame_time = calc_frame_time(reg_dict, False)
+    min_frame_time = calc_frame_time(reg_dict, mlx75027, False)
 
     frame_time_us = min_frame_time + dead_time
     if dead_time > 0:
@@ -904,6 +925,7 @@ def set_frame_time(reg_dict, frame_time_us, mlx75027):
                        "FRAME_TIME2", "FRAME_TIME3")
         return
 
+    #print("set_frame_time")
     speed = calc_speed(reg_dict, mlx75027)
     hmax = calc_hmax(reg_dict, mlx75027, speed=speed)
     frame_time_reg = int(np.floor(frame_time_us*120.0/hmax))
@@ -930,6 +952,7 @@ def calc_frame_time(reg_dict, mlx75027, use_frame_time=False):
     frame_time : float 
         The total depth frame time in micro-seconds (us) 
     """
+    #print("calc_frame_time()")
     speed = calc_speed(reg_dict, mlx75027)
     hmax = calc_hmax(reg_dict, mlx75027, speed=speed)
 
@@ -1183,13 +1206,15 @@ def calc_pll_setup(reg_dict, mlx75027):
         The dictionary that contains all the register information 
     mlx75027 : bool
         Set to True if using the MLX75027 sensor, False
-        if using the MLX75025 sensor. 
+        if using the MLX75026 sensor. 
 
     Returns
     ----------
     pll_setup : int 
         The setup time. 
     """
+
+    #print("calc_pll_setup()")
     speed = calc_speed(reg_dict, mlx75027)
     hmax = calc_hmax(reg_dict, mlx75027, speed=speed)
 
@@ -1207,13 +1232,15 @@ def calc_randnm7(reg_dict, mlx75027):
         The dictionary that contains all the register information 
     mlx75027 : bool
         Set to True if using the MLX75027 sensor, False
-        if using the MLX75025 sensor. 
+        if using the MLX75026 sensor. 
 
     Returns
     ----------
     randnm7 : int 
         The randnm7 register value
     """
+
+    #print("calc_randnm7()")
     speed = calc_speed(reg_dict, mlx75027)
     hmax = calc_hmax(reg_dict, mlx75027, speed=speed)
 
@@ -1242,13 +1269,15 @@ def calc_randnm0(reg_dict, mlx75027):
         The dictionary that contains all the register information 
     mlx75027 : bool
         Set to True if using the MLX75027 sensor, False
-        if using the MLX75025 sensor. 
+        if using the MLX75026 sensor. 
 
     Returns
     ----------
     randnm0 : int 
         The randnm0 register value  
     """
+
+    #print("calc_randnm0")
     speed = calc_speed(reg_dict, mlx75027)
     hmax = calc_hmax(reg_dict, mlx75027, speed=speed)
 

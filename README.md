@@ -74,3 +74,6 @@ MLX75027 and MLX75026
 
 EPC660 
 * Binning in HDR or Dual Phase mode, the row and column calculation is currently not supported in these sensor modes. 
+
+## Issues
+* Tkinter GUI's load really slowly on Linux.  

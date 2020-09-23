@@ -41,8 +41,8 @@ class MLX75027TimeViewer(tk.Toplevel):
     def __init__(self, master, reg_dict, mlx75027):
         # We want to do the timing stuff here
         self.master = master
-        self._mlx75027 = mlx75027
-        if mlx75027:
+        self._mlx75027 = copy.copy(mlx75027)
+        if self._mlx75027:
             sensor_str = "MLX75027"
         else:
             sensor_str = "MLX75026"
@@ -577,14 +577,14 @@ class MLX75027ROIViewer(BaseROIViewer, tk.Toplevel):
     def __init__(self, master, reg_dict, mlx75027):
         row_ind = BaseROIViewer.__init__(self, master, reg_dict)
 
-        self._mlx75027 = mlx75027
-        if mlx75027:
+        self._mlx75027 = copy.copy(mlx75027)
+        if self._mlx75027:
             sensor_str = "MLX75027"
         else:
             sensor_str = "MLX75026"
         self.master.wm_title("Chronoptics - " + sensor_str + "ROI Configure")
 
-        if mlx75027:
+        if self._mlx75027:
             self.max_rows = 480.0
             self.max_cols = 640.0
         else:
@@ -862,14 +862,12 @@ class MLX75027PLLViewer(tk.Toplevel):
 
 class MLX75027_reg_viewer(RegisterViewer):
     def __init__(self, master, reg_dict, mlx75027):
-        self._mlx75027 = mlx75027
+        self._mlx75027 = copy.copy(mlx75027)
         if mlx75027:
             sensor_str = "MLX75027"
         else:
             sensor_str = "MLX75026"
         RegisterViewer.__init__(self, master, reg_dict, sensor_str)
-
-        self._mlx75027 = mlx75027
 
         self.buts = []
         self.buts.append(["Export CSV", self.export_csv])
