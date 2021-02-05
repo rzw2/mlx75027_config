@@ -12,6 +12,7 @@ mod_freq = 35.0
 nlanes = 2
 # Reading out at 800 Mbps
 speed = 800
+# We use phases ranging from 0 to 1 for the range 0 to 360 degrees.
 # Phase steps of 0, 90, 180, 270 degrees
 phase_steps = np.array([0.0, 0.25, 0.5, 0.75])
 # Integration time of 250us per raw frame

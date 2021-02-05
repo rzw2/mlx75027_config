@@ -1,8 +1,9 @@
 # Time-of-Flight Sensor Configuration
 
+[![Scheme](doc/chronoptics.png)](https://www.chronoptics.com/)
 ## Description
 
-This Python utility is for calculating the register values of the VGA [MLX75027](https://www.melexis.com/en/product/MLX75027/Automotive-VGA-Time-Of-Flight-Sensor) Time-of-Flight image sensor from Melexis, the QVGA [MLX75026](https://www.melexis.com/en/product/MLX75026/Gen-3-Single-chip-QVGA-time-of-flight) from Melexis, and for the [EPC660](https://www.espros.com/photonics/time-of-flight-chip-epc660/) Time-of-Flight image sensor from Espros Photonics.
+This Python library is for calculating the register values of the VGA [MLX75027](https://www.melexis.com/en/product/MLX75027/Automotive-VGA-Time-Of-Flight-Sensor) Time-of-Flight image sensor from Melexis, the QVGA [MLX75026](https://www.melexis.com/en/product/MLX75026/Gen-3-Single-chip-QVGA-time-of-flight) from Melexis, and for the [EPC660](https://www.espros.com/photonics/time-of-flight-chip-epc660/) Time-of-Flight image sensor from Espros Photonics.
 
 There is a set of functions in the mlx75027_config folder for calculating register values and for importing and export csv files.  
 
@@ -11,6 +12,9 @@ A Tkinter GUI is provided for visually setting the values and generating configu
 ## Installation
 
 Add the this folder (the one with the README.md in) to your PYTHONPATH variable. 
+
+## Examples
+The examples folder contains an example of example_configuration.py for using the tools to calculate the register settings for phase steps, integration time, and modulation frequency. 
 
 ## Using 
 To run the Tkinter GUI for the MLX75027 Sensor

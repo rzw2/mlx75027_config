@@ -124,6 +124,8 @@ Software ",1
 ,0x21B9,[3:0],DUTY_CYCLE_VALUE,The total delay (of the rising and falling edge) = DUTY_CYCLE_VALUE *  500 ps (typical value),,0
 ,0x10E2,[0],LVDS_EN,The illumination signal is available as differential signal (subLVDS) or as single ended pulses (CMOS). ,"0: CMOS, 1: LVDS",0
 ,0x3C18,[1:0],EN_META,MetaData or embedded data is available on two lines after the normal pixel data. ,"0: No Metadata, 1: line #1 enabled, 2: both lines enabled ",2
+,0x2C0C,[7:0],META_LENGTH_HI,Sets the length of the frame meta data,,0
+,0x2C0D,[7:5],META_LENGTH_LOW,,,0
 ,0x4010,[7:0],PLLSSETUP,PLLSETUP is the time required for the Timing Generator block (see section 2) to settle before each frame and it can be calculated as FLOOR( 503 * 120 / HMAX + 8) ,,95
 ,0x5265,[5:0],RANDNM0_2,,,0
 ,0x5266,[7:0],RANDNM0_1,,,32
@@ -131,3 +133,7 @@ Software ",1
 ,0x5281,[5:0],RANDNM7_2,,,0
 ,0x5282,[7:0],RANDNM7_1,,,5
 ,0x5283,[7:0],RANDNM7_0,,,85
+,0x0308,[7:3],DEVICETYPE,The ToF sensor type MLX75027 or MLX75026,27: MLX75027 26: MLX75026,27
+,0x0002,[3:0],LOTNR2,The sensor lot number 2,,0
+,0x0003,[7:4],LOTNR1,The sensor lot number 1,,0
+,0x0003,[3:0],LOTNR0,The sensor lot number 0,,0

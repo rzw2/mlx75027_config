@@ -46,7 +46,7 @@ def calc_analog_delay(reg_dict):
 
     coarse_delay_seconds = reg_dict["ADELAY_COARSE"][2]/(fmod*1e6*N)
 
-    # XXX : Datasheet uses 10e-16 for pico-seconds ???
+    #
     fine_delay_seconds = reg_dict["ADELAY_FINE"][2] * 75e-12
     super_fine_seconds = reg_dict["ADELAY_SFINE"][2] * 20e-12
 
@@ -91,7 +91,7 @@ def set_analog_delay(reg_dict, delay_us):
     if fine_delay > 71:
         fine_delay = 71
 
-    # XXX : Datasheet uses 10e-16 for pico-seconds ???
+    #
     fine_time = (fine_delay*75e-12)
     # Verify that fine_delay isn't greater than a coarse delay step size
     if fine_time > (1.0/(fmod*1e6*N)):
@@ -840,8 +840,10 @@ def calc_phase_time(reg_dict, mlx75027):
     roi_row_end = (reg_dict["ROI_ROW_END_HI"][2] *
                    256 + reg_dict["ROI_ROW_END_LOW"][2])
 
+    # Phase length (in µs) =(PRETIME + Px_INTEGRATION/HMAX+ 7 + (ROI_ROW_END − ROI_ROW_START + 1) + Px_PHASE_IDLE ) ∗ HMAX/120
+
     phase_times = pre_time+int_times+idle_times + \
-        (15.0+(roi_row_end-roi_row_start))*hmax/120.0
+        (7.0+(roi_row_end-roi_row_start+1))*hmax/120.0
 
     return phase_times
 
